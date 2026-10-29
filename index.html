@@ -1169,16 +1169,11 @@ function initGate() {
   State.gateSubscribeClicked = false;
 
   subscribeBtn.addEventListener('click', () => {
-    try { window.open('https://t.me/D_8_95', '_blank', 'noopener,noreferrer'); }
-    catch (e) {
-      const a = document.createElement('a');
-      a.href = 'https://t.me/D_8_95'; a.target = '_blank';
-      a.rel = 'noopener noreferrer'; a.click();
-    }
     State.gateSubscribeClicked = true;
     verifyBtn.disabled = false;
     hint.textContent = '✅ تم فتح القناة. اضغط «تحقق من الاشتراك» للمتابعة.';
     hint.style.color = 'var(--turquoise)';
+    window.location.href = 'https://t.me/D_8_95';
   });
 
   verifyBtn.addEventListener('click', () => {
