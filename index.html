@@ -1,0 +1,2818 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0e27">
+<title>ZAKAA AI — ذكاء</title>
+<meta name="description" content="ZAKAA AI — منصة ذكاء اصطناعي شاملة للتعليم والكتابة والترجمة والأدوات اليومية">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy-900: #05081a;
+  --navy-800: #0a0e27;
+  --navy-700: #111a3d;
+  --navy-600: #1a2456;
+  --purple: #8b5cf6;
+  --purple-2: #a78bfa;
+  --blue: #38bdf8;
+  --turquoise: #2dd4bf;
+  --pink: #f472b6;
+  --orange: #fb923c;
+  --white: #ffffff;
+  --gray-100: #f1f5f9;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-700: #334155;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --grad-primary: linear-gradient(135deg, #8b5cf6 0%, #38bdf8 50%, #2dd4bf 100%);
+  --grad-warm: linear-gradient(135deg, #f472b6 0%, #fb923c 100%);
+  --grad-cool: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 100%);
+  --glass-bg: rgba(17, 26, 61, 0.55);
+  --glass-border: rgba(139, 92, 246, 0.25);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.4);
+  --shadow-md: 0 8px 30px rgba(0,0,0,0.25);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-lg: 26px;
+  --font-ar: 'Cairo', 'Tajawal', system-ui, sans-serif;
+  --font-en: 'Tajawal', 'Cairo', system-ui, sans-serif;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --sidebar-w: 260px;
+  --font-scale: 1;
+}
+[data-theme="light"] {
+  --navy-900: #f8fafc;
+  --navy-800: #eef2f9;
+  --navy-700: #ffffff;
+  --navy-600: #f1f5f9;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(139, 92, 246, 0.3);
+  --white: #0f172a;
+  --gray-100: #1e293b;
+  --gray-300: #475569;
+  --gray-400: #64748b;
+  --gray-500: #94a3b8;
+  --gray-700: #cbd5e1;
+  --shadow-lg: 0 20px 60px rgba(139, 92, 246, 0.15);
+  --shadow-md: 0 8px 30px rgba(139, 92, 246, 0.1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-ar);
+  background: var(--navy-900);
+  color: var(--white);
+  font-size: calc(15px * var(--font-scale));
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.4s, color 0.4s;
+  position: relative;
+}
+html[dir="ltr"] body { font-family: var(--font-en); }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.18), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.15), transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(45, 212, 191, 0.12), transparent 50%),
+    radial-gradient(circle at 95% 75%, rgba(244, 114, 182, 0.1), transparent 45%);
+  z-index: -2;
+  animation: bgFloat 20s ease-in-out infinite alternate;
+}
+@keyframes bgFloat {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.15) rotate(4deg); }
+}
+button, input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 3px; border-radius: 6px; }
+.hidden { display: none !important; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--grad-primary); border-radius: 10px; }
+
+#gateOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 26, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.gate-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+.gate-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(139, 92, 246, 0.1), transparent 30%);
+  animation: spin 8s linear infinite;
+  z-index: -1;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.telegram-icon {
+  width: 90px; height: 90px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #229ED9, #0088cc);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10px 40px rgba(34, 158, 217, 0.5);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 10px 40px rgba(34, 158, 217, 0.5); }
+  50% { transform: scale(1.05); box-shadow: 0 10px 50px rgba(34, 158, 217, 0.75); }
+}
+.telegram-icon svg { width: 52px; height: 52px; fill: white; }
+.gate-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.gate-message {
+  font-size: 1.05rem;
+  color: var(--gray-300);
+  margin-bottom: 28px;
+  line-height: 1.7;
+}
+.gate-actions { display: flex; flex-direction: column; gap: 12px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 14px 24px; border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 1rem; transition: var(--transition);
+  border: 1px solid transparent; position: relative; overflow: hidden;
+}
+.btn-primary {
+  background: var(--grad-primary); color: white;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+}
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(139, 92, 246, 0.6); }
+.btn-secondary {
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--purple-2);
+  border-color: var(--glass-border);
+}
+.btn-secondary:hover:not(:disabled) { background: rgba(139, 92, 246, 0.22); transform: translateY(-2px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.gate-hint { font-size: 0.85rem; color: var(--gray-400); margin-top: 16px; }
+
+#app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--glass-bg);
+  border-inline-end: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 24px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+  position: fixed; top: 0; bottom: 0; inset-inline-start: 0;
+  z-index: 100;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 12px 24px;
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: 12px;
+}
+.brand-logo {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: var(--grad-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 1.3rem; color: white;
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+.brand-name {
+  font-size: 1.2rem; font-weight: 900;
+  background: var(--grad-primary);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-sub { font-size: 0.75rem; color: var(--gray-400); }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  color: var(--gray-300); font-weight: 600; font-size: 0.95rem;
+  transition: var(--transition); text-align: start; width: 100%;
+}
+.nav-item:hover { background: rgba(139, 92, 246, 0.12); color: var(--white); transform: translateX(-3px); }
+html[dir="ltr"] .nav-item:hover { transform: translateX(3px); }
+.nav-item.active {
+  background: var(--grad-primary); color: white;
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+}
+.nav-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+.main {
+  flex: 1;
+  margin-inline-start: var(--sidebar-w);
+  padding: 24px 32px 80px;
+  min-width: 0;
+}
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 28px; flex-wrap: wrap;
+}
+.topbar-title { font-size: 1.6rem; font-weight: 800; }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; transition: var(--transition); color: var(--white);
+}
+.icon-btn:hover { background: rgba(139, 92, 246, 0.2); transform: translateY(-2px); }
+.mobile-toggle {
+  display: none; width: 42px; height: 42px; border-radius: 12px;
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  align-items: center; justify-content: center;
+  font-size: 1.3rem; color: var(--white);
+}
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 99;
+  backdrop-filter: blur(4px);
+}
+.sidebar-overlay.active { display: block; }
+.card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: var(--radius); padding: 24px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-md); transition: var(--transition);
+}
+.card:hover { border-color: rgba(139, 92, 246, 0.5); }
+.section-title {
+  font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-desc { color: var(--gray-400); margin-bottom: 24px; font-size: 0.95rem; }
+.field { margin-bottom: 18px; }
+.field-label {
+  display: block; font-weight: 600; margin-bottom: 8px;
+  font-size: 0.95rem; color: var(--gray-300);
+}
+.field-input, .field-textarea, .field-select {
+  width: 100%; padding: 12px 16px;
+  background: rgba(5, 8, 26, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--white);
+  transition: var(--transition); font-size: 0.95rem;
+}
+[data-theme="light"] .field-input,
+[data-theme="light"] .field-textarea,
+[data-theme="light"] .field-select { background: rgba(255, 255, 255, 0.8); }
+.field-input:focus, .field-textarea:focus, .field-select:focus {
+  outline: none; border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+.field-textarea { resize: vertical; min-height: 120px; }
+.field-select { cursor: pointer; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.tool-card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: var(--radius); padding: 22px;
+  cursor: pointer; transition: var(--transition);
+  position: relative; overflow: hidden; text-align: start; width: 100%;
+}
+.tool-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--purple);
+  box-shadow: 0 16px 40px rgba(139, 92, 246, 0.3);
+}
+.tool-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; margin-bottom: 14px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid var(--glass-border);
+}
+.tool-icon.purple { background: rgba(139, 92, 246, 0.18); }
+.tool-icon.blue { background: rgba(56, 189, 248, 0.18); }
+.tool-icon.turquoise { background: rgba(45, 212, 191, 0.18); }
+.tool-icon.pink { background: rgba(244, 114, 182, 0.18); }
+.tool-icon.orange { background: rgba(251, 146, 60, 0.18); }
+.tool-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+.tool-desc { font-size: 0.88rem; color: var(--gray-400); line-height: 1.5; }
+.hero { text-align: center; padding: 40px 20px 30px; }
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 900; margin-bottom: 14px;
+  background: linear-gradient(135deg, #a78bfa, #38bdf8, #2dd4bf, #f472b6);
+  background-size: 300% 300%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 8s ease infinite;
+  line-height: 1.3;
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.hero-sub {
+  font-size: 1.1rem; color: var(--gray-400);
+  max-width: 620px; margin: 0 auto 32px;
+}
+.ask-box {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex; gap: 8px;
+  box-shadow: var(--shadow-lg);
+}
+.ask-box:focus-within {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15), var(--shadow-lg);
+}
+.ask-input {
+  flex: 1; background: transparent; border: none;
+  padding: 14px 18px; color: var(--white);
+  font-size: 1rem; outline: none;
+}
+.ask-input::placeholder { color: var(--gray-500); }
+.ask-send {
+  padding: 14px 22px; border-radius: var(--radius-sm);
+  background: var(--grad-primary); color: white;
+  font-weight: 700; transition: var(--transition);
+  display: flex; align-items: center; gap: 8px;
+}
+.ask-send:hover { transform: scale(1.03); }
+.suggestions {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+  margin-top: 20px; max-width: 780px; margin-inline: auto;
+}
+.suggestion-chip {
+  padding: 8px 16px; border-radius: 20px;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid var(--glass-border);
+  color: var(--gray-300); font-size: 0.88rem;
+  transition: var(--transition);
+}
+.suggestion-chip:hover {
+  background: rgba(139, 92, 246, 0.25);
+  color: var(--white); transform: translateY(-2px);
+}
+.search-box { position: relative; margin-bottom: 24px; max-width: 500px; }
+.search-box input {
+  width: 100%; padding: 12px 16px 12px 46px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm); color: var(--white);
+}
+html[dir="ltr"] .search-box input { padding: 12px 46px 12px 16px; }
+.search-box::before {
+  content: '🔍'; position: absolute; top: 50%;
+  transform: translateY(-50%); inset-inline-start: 16px;
+  font-size: 1rem; opacity: 0.7;
+}
+.chat-container {
+  display: flex; flex-direction: column;
+  height: calc(100vh - 180px); min-height: 500px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.chat-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap;
+}
+.chat-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+.chat-controls select, .chat-controls button {
+  padding: 7px 12px; border-radius: 8px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid var(--glass-border);
+  color: var(--white); font-size: 0.85rem; cursor: pointer;
+}
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.msg { display: flex; gap: 12px; max-width: 90%; animation: msgIn 0.3s ease; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; }
+.msg-avatar {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+  background: var(--grad-primary); color: white;
+}
+.msg.user .msg-avatar { background: var(--grad-warm); }
+.msg-bubble {
+  padding: 12px 16px; border-radius: 14px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--glass-border);
+  font-size: 0.95rem; line-height: 1.75;
+  white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere;
+}
+.msg.user .msg-bubble { background: rgba(244, 114, 182, 0.12); }
+.msg-actions { display: flex; gap: 6px; margin-top: 6px; }
+.msg-action-btn {
+  font-size: 0.75rem; padding: 4px 10px; border-radius: 6px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid var(--glass-border);
+  color: var(--gray-300); transition: var(--transition);
+}
+.msg-action-btn:hover { background: rgba(139, 92, 246, 0.3); color: white; }
+.chat-input-row {
+  padding: 12px; border-top: 1px solid var(--glass-border);
+  display: flex; gap: 8px;
+}
+.chat-input-row textarea {
+  flex: 1; background: rgba(5, 8, 26, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px; padding: 10px 14px;
+  color: var(--white); resize: none;
+  min-height: 46px; max-height: 140px; font-size: 0.95rem;
+}
+[data-theme="light"] .chat-input-row textarea { background: rgba(255,255,255,0.85); }
+.loading-dots { display: inline-flex; gap: 4px; align-items: center; }
+.loading-dots span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--purple-2); animation: dotPulse 1.2s infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotPulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+.alert {
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  margin-bottom: 16px; font-size: 0.92rem; border: 1px solid;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.alert-error { background: rgba(239, 68, 68, 0.1); border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+.alert-success { background: rgba(34, 197, 94, 0.1); border-color: rgba(34,197,94,0.4); color: #86efac; }
+.alert-warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245,158,11,0.4); color: #fcd34d; }
+.alert-info { background: rgba(56, 189, 248, 0.1); border-color: rgba(56,189,248,0.4); color: #7dd3fc; }
+.page { display: none; animation: pageIn 0.35s ease; }
+.page.active { display: block; }
+@keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.result-box {
+  background: rgba(5, 8, 26, 0.7);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 18px; margin-top: 16px;
+  white-space: pre-wrap; word-wrap: break-word;
+  font-size: 0.95rem; line-height: 1.8;
+  max-height: 600px; overflow-y: auto; min-height: 60px;
+}
+[data-theme="light"] .result-box { background: rgba(255,255,255,0.9); }
+.btn-sm {
+  padding: 8px 14px; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600;
+  transition: var(--transition);
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid var(--glass-border);
+  color: var(--white);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-sm:hover { background: rgba(139, 92, 246, 0.3); }
+.btn-sm.danger { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.35); color: #fca5a5; }
+.btn-sm.danger:hover { background: rgba(239,68,68,0.3); }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.fav-btn {
+  position: absolute; top: 14px; inset-inline-end: 14px;
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; background: rgba(0,0,0,0.3);
+  border: 1px solid var(--glass-border);
+  z-index: 2; transition: var(--transition);
+}
+.fav-btn:hover { transform: scale(1.15); background: rgba(244,114,182,0.3); }
+.fav-btn.active { background: rgba(244,114,182,0.4); border-color: var(--pink); }
+.task-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: rgba(5, 8, 26, 0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px; margin-bottom: 8px;
+  transition: var(--transition);
+}
+.task-item.done { opacity: 0.55; }
+.task-item.done .task-text { text-decoration: line-through; }
+.task-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--purple);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; transition: var(--transition);
+}
+.task-item.done .task-check { background: var(--purple); }
+.task-text { flex: 1; word-break: break-word; }
+.task-priority { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+.priority-high { background: rgba(239,68,68,0.2); color: #fca5a5; }
+.priority-med { background: rgba(245,158,11,0.2); color: #fcd34d; }
+.priority-low { background: rgba(34,197,94,0.2); color: #86efac; }
+.settings-group { padding: 18px 0; border-bottom: 1px solid var(--glass-border); }
+.settings-group:last-child { border-bottom: none; }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+}
+.settings-label { font-weight: 600; }
+.settings-hint { font-size: 0.82rem; color: var(--gray-400); margin-top: 4px; }
+.toggle {
+  position: relative; width: 52px; height: 28px;
+  border-radius: 14px; background: rgba(139, 92, 246, 0.25);
+  cursor: pointer; transition: var(--transition);
+  flex-shrink: 0; border: 1px solid var(--glass-border);
+}
+.toggle::after {
+  content: ''; position: absolute; top: 3px; inset-inline-start: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: white; transition: var(--transition);
+}
+.toggle.on { background: var(--grad-primary); }
+.toggle.on::after { inset-inline-start: 27px; }
+.footer {
+  margin-top: 60px; padding: 30px 20px;
+  border-top: 1px solid var(--glass-border);
+  text-align: center; color: var(--gray-400);
+  font-size: 0.88rem; line-height: 1.9;
+}
+.footer a { color: var(--blue); }
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  :root { --sidebar-w: 280px; }
+  .sidebar { transform: translateX(-100%); }
+  html[dir="ltr"] .sidebar { transform: translateX(100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-inline-start: 0; padding: 20px 16px 60px; }
+  .mobile-toggle { display: flex; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
+  .topbar-title { font-size: 1.25rem; }
+  .chat-container { height: calc(100vh - 220px); }
+  .ask-box { flex-direction: column; }
+  .ask-send { width: 100%; justify-content: center; }
+  .hero { padding: 24px 8px 20px; }
+  .section-title { font-size: 1.2rem; }
+  .card { padding: 18px; }
+  .gate-card { padding: 30px 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="gateOverlay" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate-card">
+    <div class="telegram-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+      </svg>
+    </div>
+    <h2 class="gate-title" id="gateTitle">اشتراك إجباري</h2>
+    <p class="gate-message">عذراً عليك الاشتراك في القناة لتتمكن من استخدام التطبيق</p>
+    <div class="gate-actions">
+      <button class="btn btn-primary" id="gateSubscribeBtn">📢 اشتراك</button>
+      <button class="btn btn-secondary" id="gateVerifyBtn" disabled>✅ تحقق من الاشتراك</button>
+    </div>
+    <p class="gate-hint" id="gateHint">اضغط «اشتراك» أولاً لتفعيل زر التحقق</p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <aside class="sidebar" id="sidebar" aria-label="القائمة الرئيسية">
+    <div class="brand">
+      <div class="brand-logo" aria-hidden="true">Z</div>
+      <div>
+        <div class="brand-name">ZAKAA AI</div>
+        <div class="brand-sub">ذكاء</div>
+      </div>
+    </div>
+    <nav id="navList">
+      <button class="nav-item active" data-page="home"><span class="nav-icon">🏠</span><span>الرئيسية</span></button>
+      <button class="nav-item" data-page="assistant"><span class="nav-icon">🤖</span><span>المساعد الذكي</span></button>
+      <button class="nav-item" data-page="education"><span class="nav-icon">🎓</span><span>التعليم الذكي</span></button>
+      <button class="nav-item" data-page="writing"><span class="nav-icon">✍️</span><span>الكتابة الذكية</span></button>
+      <button class="nav-item" data-page="images"><span class="nav-icon">🖼️</span><span>الصور والملفات</span></button>
+      <button class="nav-item" data-page="translate"><span class="nav-icon">🌐</span><span>الترجمة</span></button>
+      <button class="nav-item" data-page="projects"><span class="nav-icon">💼</span><span>المشاريع والأفكار</span></button>
+      <button class="nav-item" data-page="life"><span class="nav-icon">🗓️</span><span>تنظيم الحياة</span></button>
+      <button class="nav-item" data-page="freetools"><span class="nav-icon">🧰</span><span>الأدوات المجانية</span></button>
+      <button class="nav-item" data-page="decision"><span class="nav-icon">⚖️</span><span>اتخاذ القرار</span></button>
+      <button class="nav-item" data-page="code"><span class="nav-icon">💻</span><span>مساعد البرمجة</span></button>
+      <button class="nav-item" data-page="favorites"><span class="nav-icon">⭐</span><span>المفضلة</span></button>
+      <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span>الإعدادات</span></button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-toggle" id="mobileToggle" aria-label="فتح القائمة">☰</button>
+        <h1 class="topbar-title" id="pageTitle">الرئيسية</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="langToggle" title="تبديل اللغة" aria-label="تبديل اللغة">🌐</button>
+        <button class="icon-btn" id="themeToggle" title="تبديل المظهر" aria-label="تبديل المظهر">🌙</button>
+      </div>
+    </div>
+
+    <section class="page active" id="page-home">
+      <div class="hero">
+        <h2 class="hero-title">ZAKAA AI — ذكاء بلا حدود</h2>
+        <p class="hero-sub">منصتك الشاملة للذكاء الاصطناعي: تعليم، كتابة، ترجمة، تحليل صور، أدوات يومية، وتنظيم حياة — كل ذلك في مكان واحد.</p>
+        <div class="ask-box">
+          <input type="text" class="ask-input" id="homeAskInput" placeholder="اسأل أي شيء...">
+          <button class="ask-send" id="homeAskBtn">إرسال <span>↗</span></button>
+        </div>
+        <div class="suggestions" id="homeSuggestions">
+          <button class="suggestion-chip" data-q="اشرح لي نظرية النسبية ببساطة">اشرح نظرية النسبية</button>
+          <button class="suggestion-chip" data-q="اكتب منشور فيسبوك عن التسويق الرقمي">منشور تسويقي</button>
+          <button class="suggestion-chip" data-q="ترجم: Hello World إلى العربية">ترجمة سريعة</button>
+          <button class="suggestion-chip" data-q="اقترح فكرة مشروع صغير بميزانية 500 دولار">فكرة مشروع</button>
+          <button class="suggestion-chip" data-q="لخص لي هذا النص في 5 نقاط">تلخيص نص</button>
+        </div>
+      </div>
+      <div style="margin-top:40px;">
+        <h3 class="section-title">🔍 ابحث عن أداة</h3>
+        <div class="search-box">
+          <input type="text" id="toolSearch" placeholder="ابحث بالاسم أو الوصف...">
+        </div>
+      </div>
+      <h3 class="section-title">🚀 الأدوات الأكثر استخداماً</h3>
+      <p class="section-desc">ابدأ بسرعة من الأدوات الأساسية</p>
+      <div class="grid-4" id="topToolsGrid"></div>
+      <h3 class="section-title" style="margin-top:36px;">🗂️ الأقسام</h3>
+      <p class="section-desc">تنقل بين أقسام المنصة</p>
+      <div class="grid-3" id="categoriesGrid"></div>
+      <div class="footer">
+        <strong>ZAKAA AI — ذكاء</strong> · منصة ذكاء اصطناعي شاملة<br>
+        خصوصيتك تهمنا: لا نطلب تسجيل دخول، ولا نجمع بريدك أو هاتفك. بياناتك المحلية تُحفظ في متصفحك فقط.<br>
+        باستخدامك ميزات الذكاء الاصطناعي، تُرسل طلباتك إلى خدمة Gemini عبر Cloudflare Worker.<br>
+        بوابة تيليجرام قيد على واجهة الاستخدام فقط ولا تتحقق من العضوية الفعلية.
+      </div>
+    </section>
+
+    <section class="page" id="page-assistant">
+      <div class="chat-container">
+        <div class="chat-header">
+          <strong>🤖 المساعد الذكي</strong>
+          <div class="chat-controls">
+            <select id="chatLength">
+              <option value="short">مختصر</option>
+              <option value="medium" selected>متوسط</option>
+              <option value="detailed">مفصل</option>
+            </select>
+            <select id="chatStyle">
+              <option value="normal">عادي</option>
+              <option value="formal">رسمي</option>
+              <option value="friendly">ودود</option>
+              <option value="academic">أكاديمي</option>
+            </select>
+            <button id="newChatBtn">➕ محادثة جديدة</button>
+            <button id="historyBtn">📜 السجل</button>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg assistant">
+            <div class="msg-avatar">🤖</div>
+            <div class="msg-bubble">مرحباً بك في ZAKAA AI! كيف يمكنني مساعدتك اليوم؟</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea id="chatInput" rows="1" placeholder="اكتب رسالتك هنا... (Enter للإرسال)"></textarea>
+          <button class="btn btn-primary" id="chatSendBtn" style="padding:10px 18px;">إرسال</button>
+          <button class="btn btn-secondary hidden" id="chatStopBtn" style="padding:10px 18px;">⏹ إيقاف</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-education">
+      <h2 class="section-title">🎓 التعليم الذكي</h2>
+      <p class="section-desc">أدوات تعليمية متخصصة لشرح الدروس وحل المسائل والمراجعة.</p>
+      <div class="grid-3" id="eduToolsGrid"></div>
+      <div id="eduActiveTool" class="hidden"></div>
+    </section>
+
+    <section class="page" id="page-writing">
+      <h2 class="section-title">✍️ الكتابة الذكية</h2>
+      <p class="section-desc">أنشئ وحسّن نصوصك التسويقية والرسمية والإبداعية.</p>
+      <div class="grid-3" id="writeToolsGrid"></div>
+      <div id="writeActiveTool" class="hidden"></div>
+    </section>
+
+    <section class="page" id="page-images">
+      <h2 class="section-title">🖼️ الصور والملفات</h2>
+      <p class="section-desc">حلّل الصور، استخرج النصوص، اشرح المخططات — عبر Gemini Vision.</p>
+      <div class="alert alert-warning">⚠️ الصورة التي ترفعها ستُرسل إلى خدمة Gemini لتحليلها. لا ترفع صوراً تحتوي على معلومات حساسة.</div>
+      <div class="card">
+        <div class="field">
+          <label class="field-label">اختر صورة</label>
+          <div id="dropZone" style="border:2px dashed var(--glass-border);border-radius:16px;padding:30px;text-align:center;cursor:pointer;transition:var(--transition);">
+            <p style="font-size:2rem;">📁</p>
+            <p>اسحب الصورة هنا أو اضغط للاختيار</p>
+            <p style="font-size:0.8rem;color:var(--gray-400);">PNG, JPG, WebP — حتى 8 ميغابايت</p>
+            <input type="file" id="imageFile" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;">
+          </div>
+          <div id="imagePreview" class="hidden" style="margin-top:16px;text-align:center;">
+            <img id="previewImg" style="max-width:100%;max-height:300px;border-radius:12px;border:1px solid var(--glass-border);" alt="">
+            <div style="margin-top:10px;">
+              <button class="btn-sm danger" id="removeImageBtn">🗑️ إزالة</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">نوع التحليل</label>
+          <select class="field-select" id="imageTask">
+            <option value="describe">وصف الصورة</option>
+            <option value="extract">استخراج النص (OCR)</option>
+            <option value="translate">ترجمة النص داخل الصورة</option>
+            <option value="explain">شرح مخطط أو رسم</option>
+            <option value="solve">حل مسألة دراسية في الصورة</option>
+            <option value="custom">سؤال مخصص</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">سؤالك (اختياري)</label>
+          <input type="text" class="field-input" id="imageQuestion" placeholder="مثال: ما اسم العنصر الكيميائي في الصورة؟">
+        </div>
+        <button class="btn btn-primary" id="analyzeImageBtn">🔍 تحليل الصورة</button>
+        <div class="result-box" id="imageResult">النتيجة ستظهر هنا...</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-translate">
+      <h2 class="section-title">🌐 الترجمة الذكية</h2>
+      <p class="section-desc">ترجم النصوص بين 8 لغات بدقة عالية.</p>
+      <div class="card">
+        <div class="field-row">
+          <div>
+            <label class="field-label">من</label>
+            <select class="field-select" id="transFrom">
+              <option value="auto">🌐 اكتشاف تلقائي</option>
+              <option value="ar">🇸🇦 العربية</option>
+              <option value="en">🇬🇧 الإنجليزية</option>
+              <option value="fr">🇫🇷 الفرنسية</option>
+              <option value="es">🇪🇸 الإسبانية</option>
+              <option value="de">🇩🇪 الألمانية</option>
+              <option value="tr">🇹🇷 التركية</option>
+              <option value="fa">🇮🇷 الفارسية</option>
+              <option value="ku">🟡 الكردية</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">إلى</label>
+            <select class="field-select" id="transTo">
+              <option value="ar">🇸🇦 العربية</option>
+              <option value="en">🇬🇧 الإنجليزية</option>
+              <option value="fr">🇫🇷 الفرنسية</option>
+              <option value="es">🇪🇸 الإسبانية</option>
+              <option value="de">🇩🇪 الألمانية</option>
+              <option value="tr">🇹🇷 التركية</option>
+              <option value="fa">🇮🇷 الفارسية</option>
+              <option value="ku">🟡 الكردية</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-sm" id="swapLangBtn" style="margin-bottom:12px;">🔁 تبديل اللغتين</button>
+        <div class="field">
+          <textarea class="field-textarea" id="transInput" placeholder="النص المراد ترجمته..."></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="transBtn">🌐 ترجمة</button>
+          <button class="btn-sm" id="transExplainBtn">📖 شرح المصطلحات</button>
+          <button class="btn-sm" id="transSimplifyBtn">✨ تبسيط الترجمة</button>
+          <button class="btn-sm danger" id="transClearBtn">🗑️ مسح</button>
+        </div>
+        <div class="result-box" id="transResult">الترجمة ستظهر هنا...</div>
+        <div class="btn-row">
+          <button class="btn-sm" id="transCopyBtn">📋 نسخ الترجمة</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-projects">
+      <h2 class="section-title">💼 مستشار المشاريع والأفكار</h2>
+      <p class="section-desc">خطط لمشروعك بأدوات تحليلية مدعومة بالذكاء الاصطناعي.</p>
+      <div class="card">
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">نوع المشروع</label>
+            <select class="field-select" id="projType">
+              <option value="small">مشروع صغير</option>
+              <option value="online">مشروع إلكتروني</option>
+              <option value="store">متجر / محل</option>
+              <option value="service">خدمات</option>
+              <option value="content">محتوى / إعلام</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">الميزانية</label>
+            <input type="text" class="field-input" id="projBudget" placeholder="مثال: 500 دولار أو 700000 دينار عراقي">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">المهارات المتاحة</label>
+            <input type="text" class="field-input" id="projSkills" placeholder="مثال: تصميم، برمجة، تسويق">
+          </div>
+          <div class="field">
+            <label class="field-label">الوقت المتاح يومياً</label>
+            <input type="text" class="field-input" id="projTime" placeholder="مثال: 3 ساعات">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">ماذا تريد؟</label>
+          <select class="field-select" id="projTask">
+            <option value="ideas">اقتراح أفكار</option>
+            <option value="name">اقتراح أسماء تجارية</option>
+            <option value="plan">خطة عمل أولية</option>
+            <option value="marketing">خطة تسويقية</option>
+            <option value="ads">أفكار إعلانات</option>
+            <option value="swot">تحليل مزايا وعيوب ومخاطر</option>
+            <option value="costs">قائمة تكاليف أولية</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="projBtn">💡 توليد</button>
+        <div class="alert alert-info" style="margin-top:14px;">📌 الأسعار والتقديرات المذكورة تحتاج إلى تحقق من السوق المحلي — لا نضمن أرباحاً.</div>
+        <div class="result-box" id="projResult">النتيجة ستظهر هنا...</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-decision">
+      <h2 class="section-title">⚖️ مساعد اتخاذ القرار</h2>
+      <p class="section-desc">قارن بين خياراتك واحصل على توصية مع توضيح حالات عدم اليقين.</p>
+      <div class="card">
+        <div class="field">
+          <label class="field-label">وصف الموقف / القرار</label>
+          <textarea class="field-textarea" id="decSituation" placeholder="مثال: أفكر في ترك وظيفتي الحالية لبدء عمل حر..."></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">الخيارات (خيار واحد في كل سطر)</label>
+          <textarea class="field-textarea" id="decOptions" placeholder="الخيار 1: البقاء في الوظيفة&#10;الخيار 2: البدء بالعمل الحر"></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">العوامل المهمة (اختياري)</label>
+          <input type="text" class="field-input" id="decFactors" placeholder="مثال: الدخل، الاستقرار، الحرية الزمنية">
+        </div>
+        <button class="btn btn-primary" id="decBtn">🤔 حلّل</button>
+        <div class="result-box" id="decResult">التحليل سيظهر هنا...</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-code">
+      <h2 class="section-title">💻 مساعد البرمجة</h2>
+      <p class="section-desc">اشرح الأكواد، حلّل الأخطاء، حسّن الجودة.</p>
+      <div class="card">
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">لغة البرمجة</label>
+            <select class="field-select" id="codeLang">
+              <option value="auto">تلقائي</option>
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="html">HTML</option>
+              <option value="css">CSS</option>
+              <option value="cpp">C++</option>
+              <option value="java">Java</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">المهمة</label>
+            <select class="field-select" id="codeTask">
+              <option value="explain">شرح الكود</option>
+              <option value="debug">تحليل خطأ</option>
+              <option value="improve">اقتراح تحسينات</option>
+              <option value="example">إنشاء مثال تعليمي</option>
+              <option value="format">تنسيق الكود</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">الكود أو رسالة الخطأ</label>
+          <textarea class="field-textarea" id="codeInput" placeholder="الصق الكود هنا..." style="font-family:'Courier New',monospace;direction:ltr;text-align:left;min-height:200px;"></textarea>
+        </div>
+        <button class="btn btn-primary" id="codeBtn">💻 تحليل</button>
+        <div class="alert alert-info" style="margin-top:14px;">🛡️ لن يتم تنفيذ أي كود يقدمه الذكاء الاصطناعي تلقائياً داخل المتصفح.</div>
+        <div class="result-box" id="codeResult">النتيجة ستظهر هنا...</div>
+        <div class="btn-row">
+          <button class="btn-sm" id="codeCopyBtn">📋 نسخ النتيجة</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-life">
+      <h2 class="section-title">🗓️ تنظيم الحياة</h2>
+      <p class="section-desc">أدوات محلية تعمل دون إنترنت — البيانات محفوظة في متصفحك.</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-bottom:14px;">✅ قائمة المهام</h3>
+          <div class="field-row" style="margin-bottom:12px;">
+            <input type="text" class="field-input" id="taskInput" placeholder="مهمة جديدة...">
+            <select class="field-select" id="taskPriority">
+              <option value="low">منخفضة</option>
+              <option value="med" selected>متوسطة</option>
+              <option value="high">عالية</option>
+            </select>
+          </div>
+          <button class="btn-sm" id="addTaskBtn" style="margin-bottom:14px;">➕ إضافة مهمة</button>
+          <div id="tasksList"></div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:14px;">⏱️ مؤقت الدراسة</h3>
+          <div style="text-align:center;padding:20px 0;">
+            <div style="font-size:3.5rem;font-weight:900;font-family:monospace;" id="timerDisplay">25:00</div>
+            <div style="color:var(--gray-400);margin-bottom:16px;" id="timerLabel">وضع الدراسة</div>
+            <div class="btn-row" style="justify-content:center;">
+              <button class="btn btn-primary" id="timerStart">▶ بدء</button>
+              <button class="btn-sm" id="timerReset">↺ إعادة</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:18px;">
+        <h3 style="margin-bottom:14px;">📝 ملاحظات سريعة</h3>
+        <textarea class="field-textarea" id="quickNotes" placeholder="اكتب ملاحظاتك هنا... تُحفظ تلقائياً"></textarea>
+        <div class="btn-row">
+          <button class="btn-sm" id="saveNotesBtn">💾 حفظ الآن</button>
+          <button class="btn-sm danger" id="clearNotesBtn">🗑️ مسح</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:18px;">
+        <h3 style="margin-bottom:14px;">🎯 منظم الأهداف</h3>
+        <div class="field-row" style="margin-bottom:12px;">
+          <input type="text" class="field-input" id="goalInput" placeholder="هدف جديد...">
+          <input type="date" class="field-input" id="goalDate">
+        </div>
+        <button class="btn-sm" id="addGoalBtn" style="margin-bottom:14px;">➕ إضافة</button>
+        <div id="goalsList"></div>
+      </div>
+      <div class="card" style="margin-top:18px;">
+        <h3 style="margin-bottom:14px;">💾 النسخ الاحتياطي</h3>
+        <div class="btn-row">
+          <button class="btn-sm" id="exportDataBtn">⬇️ تصدير JSON</button>
+          <button class="btn-sm" id="importDataBtn">⬆️ استيراد JSON</button>
+          <input type="file" id="importFileInput" accept=".json" style="display:none;">
+          <button class="btn-sm danger" id="clearAllDataBtn">🗑️ مسح كل البيانات</button>
+        </div>
+        <div id="backupStatus" style="margin-top:12px;font-size:0.85rem;color:var(--gray-400);"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-freetools">
+      <h2 class="section-title">🧰 الأدوات المجانية</h2>
+      <p class="section-desc">أدوات عملية تعمل محلياً داخل متصفحك.</p>
+      <div class="grid-3" id="freeToolsGrid"></div>
+      <div id="freeActiveTool" class="hidden"></div>
+    </section>
+
+    <section class="page" id="page-favorites">
+      <h2 class="section-title">⭐ المفضلة</h2>
+      <p class="section-desc">الأدوات التي أضفتها للمفضلة.</p>
+      <div class="grid-3" id="favoritesGrid"></div>
+      <p id="emptyFavMsg" class="hidden" style="text-align:center;color:var(--gray-400);padding:40px;">لا توجد أدوات في المفضلة بعد. اضغط على النجمة ⭐ في أي أداة لإضافتها.</p>
+    </section>
+
+    <section class="page" id="page-settings">
+      <h2 class="section-title">⚙️ الإعدادات</h2>
+      <div class="card">
+        <div class="settings-group">
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">اللغة</div>
+              <div class="settings-hint">تبديل بين العربية والإنجليزية</div>
+            </div>
+            <select class="field-select" id="settingsLang" style="width:auto;">
+              <option value="ar">العربية</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">الوضع الداكن</div>
+              <div class="settings-hint">تبديل المظهر الفاتح والداكن</div>
+            </div>
+            <div class="toggle on" id="settingsThemeToggle" role="switch" tabindex="0"></div>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">حجم الخط</div>
+              <div class="settings-hint">تكبير أو تصغير النص</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="btn-sm" id="fontMinus">−</button>
+              <span id="fontSizeLabel" style="min-width:50px;text-align:center;">100%</span>
+              <button class="btn-sm" id="fontPlus">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">عنوان Cloudflare Worker</div>
+              <div class="settings-hint">رابط الـ Worker الذي يتصل بـ Gemini API</div>
+            </div>
+          </div>
+          <input type="text" class="field-input" id="workerUrlInput" placeholder="https://your-worker.workers.dev" style="margin-top:10px;">
+          <button class="btn-sm" id="saveWorkerUrl" style="margin-top:8px;">💾 حفظ</button>
+          <div id="workerUrlStatus" style="margin-top:8px;font-size:0.85rem;"></div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">حذف البيانات المحلية</div>
+              <div class="settings-hint">محادثات، مفضلة، مهام، إعدادات</div>
+            </div>
+            <button class="btn-sm danger" id="clearAllLocalData">🗑️ حذف الكل</button>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-label">حول ZAKAA AI</div>
+          <div class="settings-hint" style="margin-top:8px;line-height:1.9;">
+            منصة ذكاء اصطناعي شاملة بدون تسجيل دخول أو قاعدة بيانات.<br>
+            المحادثات والبيانات تُحفظ محلياً في متصفحك فقط.<br>
+            بوابة تيليجرام قيد واجهة فقط ولا تتحقق من العضوية الفعلية.<br>
+            ميزات الذكاء الاصطناعي ترسل طلباتك إلى Gemini عبر Worker.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="historyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div class="card" style="max-width:500px;width:100%;max-height:80vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3>📜 سجل المحادثات</h3>
+      <button class="btn-sm" onclick="document.getElementById('historyModal').style.display='none'">✕</button>
+    </div>
+    <div id="historyList"></div>
+    <button class="btn-sm danger" id="clearHistoryBtn" style="margin-top:12px;">🗑️ حذف السجل كاملاً</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const API_BASE_URL = "YOUR_CLOUDFLARE_WORKER_URL";
+
+const State = {
+  gateSubscribeClicked: false,
+  currentPage: 'home',
+  chatHistory: [],
+  chatHistoryList: [],
+  favorites: [],
+  tasks: [],
+  goals: [],
+  selectedImage: null,
+  isChatBusy: false,
+  abortController: null,
+  lang: 'ar',
+  theme: 'dark',
+  fontScale: 1,
+};
+
+const $ = (id) => document.getElementById(id);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function safeText(el, text) { el.textContent = text == null ? '' : String(text); }
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function debounce(fn, ms = 200) {
+  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+const Store = {
+  set(key, value) {
+    try { localStorage.setItem('zakaa_' + key, JSON.stringify(value)); return true; }
+    catch (e) { console.warn('فشل حفظ', key, e); return false; }
+  },
+  get(key, fallback = null) {
+    try {
+      const raw = localStorage.getItem('zakaa_' + key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) { return fallback; }
+  },
+  remove(key) { try { localStorage.removeItem('zakaa_' + key); } catch (e) {} },
+  clearAll() {
+    try {
+      Object.keys(localStorage).forEach(k => {
+        if (k.startsWith('zakaa_')) localStorage.removeItem(k);
+      });
+    } catch (e) {}
+  }
+};
+
+function initGate() {
+  const overlay = $('gateOverlay');
+  const subscribeBtn = $('gateSubscribeBtn');
+  const verifyBtn = $('gateVerifyBtn');
+  const hint = $('gateHint');
+  const app = $('app');
+
+  verifyBtn.disabled = true;
+  State.gateSubscribeClicked = false;
+
+  subscribeBtn.addEventListener('click', () => {
+    try { window.open('https://t.me/D_8_95', '_blank', 'noopener,noreferrer'); }
+    catch (e) {
+      const a = document.createElement('a');
+      a.href = 'https://t.me/D_8_95'; a.target = '_blank';
+      a.rel = 'noopener noreferrer'; a.click();
+    }
+    State.gateSubscribeClicked = true;
+    verifyBtn.disabled = false;
+    hint.textContent = '✅ تم فتح القناة. اضغط «تحقق من الاشتراك» للمتابعة.';
+    hint.style.color = 'var(--turquoise)';
+  });
+
+  verifyBtn.addEventListener('click', () => {
+    if (!State.gateSubscribeClicked) {
+      hint.textContent = '⚠️ يجب الضغط على «اشتراك» أولاً.';
+      return;
+    }
+    overlay.style.display = 'none';
+    app.classList.remove('hidden');
+    State.gateSubscribeClicked = false;
+    loadUserData();
+  });
+}
+
+function getEffectiveWorkerUrl() {
+  if (API_BASE_URL && API_BASE_URL !== 'YOUR_CLOUDFLARE_WORKER_URL') return API_BASE_URL;
+  return window.__workerUrl || '';
+}
+
+async function callAI(opts) {
+  const url = getEffectiveWorkerUrl();
+  if (!url) {
+    throw new Error('لم يتم إعداد رابط Cloudflare Worker. اذهب إلى «الإعدادات» وضع رابط Worker أولاً.');
+  }
+  const body = {
+    prompt: String(opts.prompt || '').slice(0, 20000),
+    systemPrompt: String(opts.systemPrompt || '').slice(0, 4000),
+  };
+  if (opts.image && opts.image.dataUrl && opts.image.mimeType) {
+    body.image = { dataUrl: opts.image.dataUrl, mimeType: opts.image.mimeType };
+  }
+  let resp;
+  try {
+    resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: opts.signal || undefined,
+    });
+  } catch (e) {
+    if (e.name === 'AbortError') throw e;
+    throw new Error('فشل الاتصال بالخدمة. تحقق من الإنترنت أو رابط Worker.');
+  }
+  let data = null;
+  try { data = await resp.json(); } catch (e) { data = null; }
+  if (!resp.ok) {
+    const msg = (data && (data.error || data.message)) || `خطأ HTTP ${resp.status}`;
+    throw new Error(msg);
+  }
+  if (!data || typeof data.text !== 'string') throw new Error('استجابة غير صالحة من الخدمة.');
+  return data.text;
+}
+
+const PAGE_TITLES = {
+  home: 'الرئيسية', assistant: 'المساعد الذكي', education: 'التعليم الذكي',
+  writing: 'الكتابة الذكية', images: 'الصور والملفات', translate: 'الترجمة',
+  projects: 'المشاريع والأفكار', life: 'تنظيم الحياة', freetools: 'الأدوات المجانية',
+  decision: 'اتخاذ القرار', code: 'مساعد البرمجة', favorites: 'المفضلة', settings: 'الإعدادات',
+};
+const PAGE_TITLES_EN = {
+  home: 'Home', assistant: 'AI Assistant', education: 'Education',
+  writing: 'Writing', images: 'Images & Files', translate: 'Translation',
+  projects: 'Projects', life: 'Life Organizer', freetools: 'Free Tools',
+  decision: 'Decision Helper', code: 'Coding Assistant',
+  favorites: 'Favorites', settings: 'Settings',
+};
+
+function showPage(pageId) {
+  if (!PAGE_TITLES[pageId]) return;
+  State.currentPage = pageId;
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + pageId));
+  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === pageId));
+  const titles = State.lang === 'en' ? PAGE_TITLES_EN : PAGE_TITLES;
+  safeText($('pageTitle'), titles[pageId] || '');
+  $('sidebar').classList.remove('open');
+  $('sidebarOverlay').classList.remove('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (pageId === 'favorites') renderFavorites();
+}
+
+function initNav() {
+  $$('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => showPage(btn.dataset.page));
+  });
+  $('mobileToggle').addEventListener('click', () => {
+    $('sidebar').classList.toggle('open');
+    $('sidebarOverlay').classList.toggle('active');
+  });
+  $('sidebarOverlay').addEventListener('click', () => {
+    $('sidebar').classList.remove('open');
+    $('sidebarOverlay').classList.remove('active');
+  });
+}
+
+function applyLanguage(lang) {
+  State.lang = lang;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  const titles = lang === 'en' ? PAGE_TITLES_EN : PAGE_TITLES;
+  safeText($('pageTitle'), titles[State.currentPage] || '');
+  if ($('settingsLang')) $('settingsLang').value = lang;
+  Store.set('lang', lang);
+}
+
+function applyTheme(theme) {
+  State.theme = theme;
+  if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  const t = $('settingsThemeToggle');
+  if (t) t.classList.toggle('on', theme === 'dark');
+  Store.set('theme', theme);
+}
+
+function applyFontScale(scale) {
+  State.fontScale = Math.max(0.85, Math.min(1.4, scale));
+  document.documentElement.style.setProperty('--font-scale', State.fontScale.toFixed(2));
+  if ($('fontSizeLabel')) $('fontSizeLabel').textContent = Math.round(State.fontScale * 100) + '%';
+  Store.set('fontScale', State.fontScale);
+}
+
+function initSettings() {
+  $('themeToggle').addEventListener('click', () => applyTheme(State.theme === 'dark' ? 'light' : 'dark'));
+  $('langToggle').addEventListener('click', () => applyLanguage(State.lang === 'ar' ? 'en' : 'ar'));
+  $('settingsLang').addEventListener('change', (e) => applyLanguage(e.target.value));
+  $('settingsThemeToggle').addEventListener('click', () => applyTheme(State.theme === 'dark' ? 'light' : 'dark'));
+  $('fontPlus').addEventListener('click', () => applyFontScale(State.fontScale + 0.1));
+  $('fontMinus').addEventListener('click', () => applyFontScale(State.fontScale - 0.1));
+
+  const savedUrl = Store.get('workerUrl', '');
+  if (savedUrl) $('workerUrlInput').value = savedUrl;
+  $('saveWorkerUrl').addEventListener('click', () => {
+    const v = $('workerUrlInput').value.trim();
+    if (v && !/^https?:\/\//i.test(v)) {
+      $('workerUrlStatus').textContent = '⚠️ الرابط يجب أن يبدأ بـ https://';
+      $('workerUrlStatus').style.color = 'var(--warning)';
+      return;
+    }
+    Store.set('workerUrl', v);
+    window.__workerUrl = v;
+    $('workerUrlStatus').textContent = v ? '✅ تم الحفظ.' : 'تم المسح.';
+    $('workerUrlStatus').style.color = 'var(--turquoise)';
+  });
+
+  $('clearAllLocalData').addEventListener('click', () => {
+    if (!confirm('هل تريد حذف جميع البيانات المحلية؟')) return;
+    Store.clearAll();
+    alert('تم حذف البيانات. سيُعاد تحميل الصفحة.');
+    location.reload();
+  });
+}
+
+function loadUserData() {
+  const savedUrl = Store.get('workerUrl', '');
+  if (savedUrl) window.__workerUrl = savedUrl;
+
+  State.favorites = Store.get('favorites', []) || [];
+  State.tasks = Store.get('tasks', []) || [];
+  State.goals = Store.get('goals', []) || [];
+  State.chatHistoryList = Store.get('chatHistoryList', []) || [];
+
+  applyLanguage(Store.get('lang', 'ar'));
+  applyTheme(Store.get('theme', 'dark'));
+  applyFontScale(Store.get('fontScale', 1));
+
+  const notes = Store.get('quickNotes', '');
+  if (notes) $('quickNotes').value = notes;
+
+  renderTopTools();
+  renderCategories();
+  renderEduTools();
+  renderWriteTools();
+  renderFreeTools();
+  renderFavorites();
+  renderTasks();
+  renderGoals();
+  initQuickNotes();
+  initTimer();
+}
+
+const ALL_TOOLS = [
+  { id: 'assistant', page: 'assistant', icon: '🤖', title: 'المساعد الذكي', desc: 'محادثة متتابعة مع Gemini' },
+  { id: 'edu_explain', page: 'education', icon: '📘', title: 'شرح الدروس', desc: 'شرح مبسط لأي درس' },
+  { id: 'edu_math', page: 'education', icon: '➗', title: 'حل المسائل', desc: 'حل خطوة بخطوة' },
+  { id: 'edu_summarize', page: 'education', icon: '📝', title: 'تلخيص النصوص', desc: 'تلخيص دراسي' },
+  { id: 'edu_quiz', page: 'education', icon: '❓', title: 'أسئلة امتحانية', desc: 'توليد أسئلة' },
+  { id: 'write_social', page: 'writing', icon: '📱', title: 'منشورات اجتماعية', desc: 'فيسبوك وإنستغرام' },
+  { id: 'write_article', page: 'writing', icon: '📰', title: 'مقالات', desc: 'مقالات وتقارير' },
+  { id: 'write_email', page: 'writing', icon: '✉️', title: 'بريد إلكتروني', desc: 'رسائل رسمية' },
+  { id: 'write_cv', page: 'writing', icon: '📄', title: 'سيرة ذاتية', desc: 'CV احترافي' },
+  { id: 'translate', page: 'translate', icon: '🌐', title: 'الترجمة', desc: '8 لغات' },
+  { id: 'projects', page: 'projects', icon: '💼', title: 'المشاريع', desc: 'أفكار وخطط' },
+  { id: 'decision', page: 'decision', icon: '⚖️', title: 'اتخاذ القرار', desc: 'مقارنة خيارات' },
+  { id: 'code', page: 'code', icon: '💻', title: 'مساعد البرمجة', desc: 'شرح وتحسين أكواد' },
+  { id: 'life', page: 'life', icon: '🗓️', title: 'تنظيم الحياة', desc: 'مهام وأهداف' },
+  { id: 'free_calc', page: 'freetools', icon: '🧮', title: 'الحاسبة', desc: 'حاسبة عامة' },
+  { id: 'free_age', page: 'freetools', icon: '🎂', title: 'حساب العمر', desc: 'من تاريخ الميلاد' },
+  { id: 'free_words', page: 'freetools', icon: '🔢', title: 'عداد الكلمات', desc: 'كلمات وحروف' },
+  { id: 'free_qr', page: 'freetools', icon: '📱', title: 'QR Code', desc: 'توليد رموز' },
+  { id: 'free_pass', page: 'freetools', icon: '🔐', title: 'كلمة مرور', desc: 'عشوائية آمنة' },
+  { id: 'free_imgcompress', page: 'freetools', icon: '🖼️', title: 'ضغط الصور', desc: 'تصغير الحجم' },
+];
+
+function renderTopTools() {
+  const grid = $('topToolsGrid');
+  grid.innerHTML = '';
+  ALL_TOOLS.slice(0, 8).forEach(t => grid.appendChild(makeToolCard(t)));
+}
+function renderCategories() {
+  const grid = $('categoriesGrid');
+  grid.innerHTML = '';
+  const cats = [
+    { page: 'assistant', icon: '🤖', title: 'المساعد الذكي', desc: 'اسأل واحصل على إجابات' },
+    { page: 'education', icon: '🎓', title: 'التعليم', desc: 'شرح، حل، مراجعة' },
+    { page: 'writing', icon: '✍️', title: 'الكتابة', desc: 'محتوى واحترافية' },
+    { page: 'images', icon: '🖼️', title: 'الصور', desc: 'تحليل صور ومستندات' },
+    { page: 'translate', icon: '🌐', title: 'الترجمة', desc: '8 لغات' },
+    { page: 'projects', icon: '💼', title: 'المشاريع', desc: 'أفكار وخطط' },
+    { page: 'life', icon: '🗓️', title: 'تنظيم الحياة', desc: 'مهام وأهداف' },
+    { page: 'freetools', icon: '🧰', title: 'أدوات مجانية', desc: '20 أداة محلية' },
+    { page: 'code', icon: '💻', title: 'البرمجة', desc: 'أكواد وتحليل' },
+  ];
+  cats.forEach(c => {
+    const card = document.createElement('button');
+    card.className = 'tool-card';
+    card.innerHTML = `
+      <div class="tool-icon purple">${c.icon}</div>
+      <div class="tool-title">${escapeHtml(c.title)}</div>
+      <div class="tool-desc">${escapeHtml(c.desc)}</div>
+    `;
+    card.addEventListener('click', () => showPage(c.page));
+    grid.appendChild(card);
+  });
+}
+function makeToolCard(tool) {
+  const card = document.createElement('button');
+  card.className = 'tool-card';
+  const isFav = State.favorites.includes(tool.id);
+  card.innerHTML = `
+    <span class="fav-btn ${isFav ? 'active' : ''}" data-fav="${tool.id}">${isFav ? '⭐' : '☆'}</span>
+    <div class="tool-icon blue">${tool.icon}</div>
+    <div class="tool-title">${escapeHtml(tool.title)}</div>
+    <div class="tool-desc">${escapeHtml(tool.desc)}</div>
+  `;
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('[data-fav]')) { e.stopPropagation(); toggleFavorite(tool.id); return; }
+    showPage(tool.page);
+    if (tool.page === 'education' && tool.id.startsWith('edu_')) openEduTool(tool.id);
+    if (tool.page === 'writing' && tool.id.startsWith('write_')) openWriteTool(tool.id);
+    if (tool.page === 'freetools' && tool.id.startsWith('free_')) openFreeTool(tool.id);
+  });
+  return card;
+}
+
+function toggleFavorite(toolId) {
+  const idx = State.favorites.indexOf(toolId);
+  if (idx >= 0) State.favorites.splice(idx, 1);
+  else State.favorites.push(toolId);
+  Store.set('favorites', State.favorites);
+  renderTopTools();
+  renderFavorites();
+  $$('[data-fav]').forEach(b => {
+    const id = b.getAttribute('data-fav');
+    const active = State.favorites.includes(id);
+    b.classList.toggle('active', active);
+    b.textContent = active ? '⭐' : '☆';
+  });
+}
+
+function renderFavorites() {
+  const grid = $('favoritesGrid');
+  const empty = $('emptyFavMsg');
+  grid.innerHTML = '';
+  const favTools = ALL_TOOLS.filter(t => State.favorites.includes(t.id));
+  if (favTools.length === 0) { empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  favTools.forEach(t => grid.appendChild(makeToolCard(t)));
+}
+
+function initSearch() {
+  const input = $('toolSearch');
+  input.addEventListener('input', debounce(() => {
+    const q = input.value.trim().toLowerCase();
+    const grid = $('topToolsGrid');
+    if (!q) { renderTopTools(); return; }
+    const matches = ALL_TOOLS.filter(t =>
+      t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q)
+    );
+    grid.innerHTML = '';
+    if (matches.length === 0) {
+      const p = document.createElement('p');
+      p.style.color = 'var(--gray-400)';
+      p.textContent = 'لا توجد نتائج.';
+      grid.appendChild(p);
+    } else {
+      matches.forEach(t => grid.appendChild(makeToolCard(t)));
+    }
+  }, 250));
+}
+
+function renderChatMessage(role, text, opts = {}) {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + role;
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = role === 'user' ? '👤' : '🤖';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+  if (role === 'assistant' && !opts.loading) {
+    const actions = document.createElement('div');
+    actions.className = 'msg-actions';
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'msg-action-btn';
+    copyBtn.textContent = '📋 نسخ';
+    copyBtn.addEventListener('click', () => copyToClipboard(text));
+    actions.appendChild(copyBtn);
+    if (opts.allowRegenerate) {
+      const regenBtn = document.createElement('button');
+      regenBtn.className = 'msg-action-btn';
+      regenBtn.textContent = '🔄 إعادة توليد';
+      regenBtn.addEventListener('click', () => regenerateLast());
+      actions.appendChild(regenBtn);
+    }
+    bubble.appendChild(actions);
+  }
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  $('chatMessages').appendChild(wrap);
+  $('chatMessages').scrollTop = $('chatMessages').scrollHeight;
+  return wrap;
+}
+
+function renderChatLoading() {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg assistant';
+  wrap.id = 'chatLoadingMsg';
+  wrap.innerHTML = `<div class="msg-avatar">🤖</div>
+    <div class="msg-bubble"><span class="loading-dots"><span></span><span></span><span></span></span> يفكر...</div>`;
+  $('chatMessages').appendChild(wrap);
+  $('chatMessages').scrollTop = $('chatMessages').scrollHeight;
+}
+function removeChatLoading() {
+  const el = $('chatLoadingMsg');
+  if (el) el.remove();
+}
+
+async function sendChatMessage() {
+  if (State.isChatBusy) return;
+  const input = $('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  renderChatMessage('user', text);
+  input.value = '';
+  autoResizeTextarea(input);
+  State.chatHistory.push({ role: 'user', text });
+
+  State.isChatBusy = true;
+  $('chatSendBtn').classList.add('hidden');
+  $('chatStopBtn').classList.remove('hidden');
+  renderChatLoading();
+
+  const length = $('chatLength').value;
+  const style = $('chatStyle').value;
+  const lengthMap = { short: 'مختصر جداً', medium: 'متوسط', detailed: 'مفصل' };
+  const styleMap = { normal: 'عادي', formal: 'رسمي', friendly: 'ودود', academic: 'أكاديمي' };
+  const langName = State.lang === 'ar' ? 'العربية' : 'English';
+  const sys = `أنت مساعد ذكي في ZAKAA AI. أجب باللغة ${langName}.
+طول الإجابة: ${lengthMap[length]}. الأسلوب: ${styleMap[style]}.
+استخدم تنسيقاً واضحاً (عناوين، نقاط، أكواد عند الحاجة). لا تخترع معلومات.`;
+
+  const recent = State.chatHistory.slice(-7, -1).map(m => `${m.role === 'user' ? 'المستخدم' : 'المساعد'}: ${m.text}`).join('\n');
+  const prompt = recent ? `سياق المحادثة:\n${recent}\n\nسؤال المستخدم الجديد: ${text}` : text;
+
+  State.abortController = new AbortController();
+  try {
+    const answer = await callAI({ prompt, systemPrompt: sys, signal: State.abortController.signal });
+    removeChatLoading();
+    renderChatMessage('assistant', answer, { allowRegenerate: true });
+    State.chatHistory.push({ role: 'assistant', text: answer });
+  } catch (e) {
+    removeChatLoading();
+    if (e.name === 'AbortError') renderChatMessage('assistant', '⏹ تم إيقاف الطلب.');
+    else renderChatMessage('assistant', '❌ ' + (e.message || 'حدث خطأ.'));
+  } finally {
+    State.isChatBusy = false;
+    $('chatSendBtn').classList.remove('hidden');
+    $('chatStopBtn').classList.add('hidden');
+    State.abortController = null;
+  }
+}
+
+function regenerateLast() {
+  let lastUserIdx = -1;
+  for (let i = State.chatHistory.length - 1; i >= 0; i--) {
+    if (State.chatHistory[i].role === 'user') { lastUserIdx = i; break; }
+  }
+  if (lastUserIdx < 0) return;
+  const lastUser = State.chatHistory[lastUserIdx].text;
+  const msgs = $('chatMessages');
+  const lastAssistant = msgs.querySelector('.msg.assistant:last-child');
+  if (lastAssistant) lastAssistant.remove();
+  if (State.chatHistory[State.chatHistory.length - 1].role === 'assistant') State.chatHistory.pop();
+  $('chatInput').value = lastUser;
+  if (State.chatHistory[State.chatHistory.length - 1] && State.chatHistory[State.chatHistory.length - 1].role === 'user') State.chatHistory.pop();
+  const lastUserMsg = msgs.querySelector('.msg.user:last-of-type');
+  if (lastUserMsg) lastUserMsg.remove();
+  sendChatMessage();
+}
+
+function initChat() {
+  const input = $('chatInput');
+  input.addEventListener('input', () => autoResizeTextarea(input));
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+  });
+  $('chatSendBtn').addEventListener('click', sendChatMessage);
+  $('chatStopBtn').addEventListener('click', () => {
+    if (State.abortController) State.abortController.abort();
+  });
+  $('newChatBtn').addEventListener('click', () => {
+    if (State.chatHistory.length >= 2) {
+      State.chatHistoryList.unshift({ id: uid(), date: new Date().toISOString(), messages: State.chatHistory.slice() });
+      Store.set('chatHistoryList', State.chatHistoryList);
+    }
+    State.chatHistory = [];
+    $('chatMessages').innerHTML = `<div class="msg assistant"><div class="msg-avatar">🤖</div><div class="msg-bubble">محادثة جديدة. كيف يمكنني مساعدتك؟</div></div>`;
+  });
+  $('historyBtn').addEventListener('click', showHistoryModal);
+  $('clearHistoryBtn').addEventListener('click', () => {
+    if (!confirm('حذف سجل المحادثات كاملاً؟')) return;
+    State.chatHistoryList = [];
+    Store.set('chatHistoryList', []);
+    showHistoryModal();
+  });
+}
+
+function autoResizeTextarea(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+function showHistoryModal() {
+  const modal = $('historyModal');
+  const list = $('historyList');
+  list.innerHTML = '';
+  if (State.chatHistoryList.length === 0) {
+    list.innerHTML = '<p style="color:var(--gray-400);text-align:center;padding:20px;">لا يوجد سجل بعد.</p>';
+  } else {
+    State.chatHistoryList.forEach(conv => {
+      const item = document.createElement('div');
+      item.className = 'task-item';
+      const dateStr = new Date(conv.date).toLocaleString('ar-IQ');
+      const firstMsg = conv.messages.find(m => m.role === 'user');
+      item.innerHTML = `<div class="task-text"><strong>${escapeHtml(firstMsg ? firstMsg.text.slice(0, 60) : 'محادثة')}</strong><br><small style="color:var(--gray-400)">${escapeHtml(dateStr)}</small></div>`;
+      const loadBtn = document.createElement('button');
+      loadBtn.className = 'btn-sm';
+      loadBtn.textContent = '📂 فتح';
+      loadBtn.addEventListener('click', () => {
+        State.chatHistory = conv.messages.slice();
+        const msgs = $('chatMessages');
+        msgs.innerHTML = '';
+        conv.messages.forEach(m => renderChatMessage(m.role, m.text));
+        modal.style.display = 'none';
+      });
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-sm danger';
+      delBtn.textContent = '🗑️';
+      delBtn.addEventListener('click', () => {
+        State.chatHistoryList = State.chatHistoryList.filter(c => c.id !== conv.id);
+        Store.set('chatHistoryList', State.chatHistoryList);
+        showHistoryModal();
+      });
+      item.appendChild(loadBtn);
+      item.appendChild(delBtn);
+      list.appendChild(item);
+    });
+  }
+  modal.style.display = 'flex';
+}
+
+function initHomeAsk() {
+  const input = $('homeAskInput');
+  const btn = $('homeAskBtn');
+  const handler = () => {
+    const q = input.value.trim();
+    if (!q) return;
+    showPage('assistant');
+    $('chatInput').value = q;
+    input.value = '';
+    sendChatMessage();
+  };
+  btn.addEventListener('click', handler);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') handler(); });
+  $$('#homeSuggestions .suggestion-chip').forEach(chip => {
+    chip.addEventListener('click', () => { input.value = chip.dataset.q; handler(); });
+  });
+}
+
+const EDU_TOOLS = [
+  { id: 'edu_explain', icon: '📘', title: 'شرح الدروس', prompt: 'اشرح الدرس التالي بطريقة بسيطة ومتدرجة.' },
+  { id: 'edu_math', icon: '➗', title: 'حل المسائل', prompt: 'حل المسألة الرياضية التالية مع عرض الخطوات.' },
+  { id: 'edu_simplify', icon: '✨', title: 'تبسيط المواضيع', prompt: 'بسّط الموضوع التالي بلغة سهلة مع أمثلة.' },
+  { id: 'edu_summarize', icon: '📝', title: 'تلخيص النصوص', prompt: 'لخّص النص التالي في نقاط أساسية.' },
+  { id: 'edu_quiz', icon: '❓', title: 'أسئلة امتحانية', prompt: 'أنشئ 10 أسئلة امتحانية متنوعة.' },
+  { id: 'edu_mcq', icon: '📋', title: 'اختبار متعدد', prompt: 'أنشئ 10 أسئلة اختيار من متعدد مع الإجابات.' },
+  { id: 'edu_flashcards', icon: '🎴', title: 'بطاقات مراجعة', prompt: 'أنشئ 10 بطاقات مراجعة (سؤال/جواب).' },
+  { id: 'edu_schedule', icon: '📅', title: 'جدول دراسة', prompt: 'أعد جدول دراسة أسبوعي متوازن.' },
+  { id: 'edu_exercises', icon: '🏋️', title: 'تمارين مشابهة', prompt: 'أنشئ 5 تمارين مشابهة مع الحلول.' },
+  { id: 'edu_science', icon: '🔬', title: 'شرح علمي', prompt: 'اشرح المفهوم العلمي التالي مع التطبيقات.' },
+  { id: 'edu_translate', icon: '🌐', title: 'ترجمة دراسية', prompt: 'ترجم النص الدراسي التالي بدقة.' },
+  { id: 'edu_code', icon: '💻', title: 'شرح كود', prompt: 'اشرح الكود التالي سطراً بسطر.' },
+  { id: 'edu_bullets', icon: '•', title: 'تحويل إلى نقاط', prompt: 'حوّل النص التالي إلى نقاط مراجعة.' },
+];
+
+function renderEduTools() {
+  const grid = $('eduToolsGrid');
+  grid.innerHTML = '';
+  EDU_TOOLS.forEach(t => {
+    const card = document.createElement('button');
+    card.className = 'tool-card';
+    card.innerHTML = `<div class="tool-icon purple">${t.icon}</div><div class="tool-title">${escapeHtml(t.title)}</div>`;
+    card.addEventListener('click', () => openEduTool(t.id));
+    grid.appendChild(card);
+  });
+}
+
+function openEduTool(toolId) {
+  const tool = EDU_TOOLS.find(t => t.id === toolId);
+  if (!tool) return;
+  showPage('education');
+  $('eduToolsGrid').classList.add('hidden');
+  const active = $('eduActiveTool');
+  active.classList.remove('hidden');
+  active.innerHTML = `
+    <button class="btn-sm" id="eduBack">← رجوع للأدوات</button>
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:14px;">${tool.icon} ${escapeHtml(tool.title)}</h3>
+      <div class="field">
+        <label class="field-label">الموضوع / النص</label>
+        <textarea class="field-textarea" id="eduInput" placeholder="الصق النص أو اكتب الموضوع..."></textarea>
+      </div>
+      <button class="btn btn-primary" id="eduRunBtn">🚀 تنفيذ</button>
+      <div class="result-box" id="eduResult">النتيجة ستظهر هنا...</div>
+      <div class="btn-row">
+        <button class="btn-sm" id="eduCopyBtn">📋 نسخ</button>
+        <button class="btn-sm danger" id="eduClearBtn">🗑️ مسح</button>
+      </div>
+    </div>
+  `;
+  $('eduBack').onclick = () => {
+    $('eduToolsGrid').classList.remove('hidden');
+    active.classList.add('hidden');
+  };
+  $('eduRunBtn').addEventListener('click', async () => {
+    const text = $('eduInput').value.trim();
+    if (!text) { $('eduResult').textContent = '⚠️ أدخل النص أولاً.'; return; }
+    $('eduResult').textContent = '⏳ جارٍ التنفيذ...';
+    try {
+      const answer = await callAI({ prompt: `${tool.prompt}\n\n${text}`, systemPrompt: 'أنت معلم خبير. أجب بالعربية بوضوح.' });
+      $('eduResult').textContent = answer;
+    } catch (e) { $('eduResult').textContent = '❌ ' + e.message; }
+  });
+  $('eduCopyBtn').onclick = () => copyToClipboard($('eduResult').textContent);
+  $('eduClearBtn').onclick = () => { $('eduInput').value = ''; $('eduResult').textContent = 'النتيجة ستظهر هنا...'; };
+}
+
+const WRITE_TOOLS = [
+  { id: 'write_social', icon: '📱', title: 'منشورات اجتماعية', prompt: 'اكتب منشوراً جذاباً مناسباً للمنصة المذكورة.' },
+  { id: 'write_youtube', icon: '🎥', title: 'وصف يوتيوب', prompt: 'اكتب وصف فيديو يوتيوب محسّن للبحث.' },
+  { id: 'write_article', icon: '📰', title: 'مقال / تقرير', prompt: 'اكتب مقالاً منظماً بعنوان ومقدمة وأقسام وخاتمة.' },
+  { id: 'write_letter', icon: '💌', title: 'رسالة رسمية', prompt: 'اكتب رسالة رسمية مهنية.' },
+  { id: 'write_email', icon: '✉️', title: 'بريد إلكتروني', prompt: 'اكتب بريداً إلكترونياً مهنياً.' },
+  { id: 'write_ads', icon: '📣', title: 'إعلان تجاري', prompt: 'اكتب إعلاناً تجارياً مقنعاً وقصيراً.' },
+  { id: 'write_product', icon: '🛍️', title: 'وصف منتج', prompt: 'اكتب وصف منتج جذاباً.' },
+  { id: 'write_names', icon: '💡', title: 'أسماء مشاريع', prompt: 'اقترح 10 أسماء إبداعية.' },
+  { id: 'write_spelling', icon: '✓', title: 'تصحيح إملائي', prompt: 'صحح الأخطاء الإملائية والنحوية.' },
+  { id: 'write_rephrase', icon: '🔄', title: 'إعادة صياغة', prompt: 'أعد صياغة النص بأسلوب مختلف.' },
+  { id: 'write_summarize', icon: '📝', title: 'تلخيص', prompt: 'لخّص النص في نقاط موجزة.' },
+  { id: 'write_iraqi', icon: '🇮🇶', title: 'لهجة عراقية → فصحى', prompt: 'حوّل النص من اللهجة العراقية إلى الفصحى.' },
+  { id: 'write_simplify', icon: '✨', title: 'تبسيط رسمي', prompt: 'بسّط النص الرسمي بلغة سهلة.' },
+  { id: 'write_titles', icon: '📌', title: 'عناوين جذابة', prompt: 'اقترح 10 عناوين جذابة.' },
+  { id: 'write_ideas', icon: '🌟', title: 'أفكار محتوى', prompt: 'أنشئ 20 فكرة محتوى.' },
+  { id: 'write_cv', icon: '📄', title: 'سيرة ذاتية', prompt: 'اكتب سيرة ذاتية احترافية.' },
+];
+
+function renderWriteTools() {
+  const grid = $('writeToolsGrid');
+  grid.innerHTML = '';
+  WRITE_TOOLS.forEach(t => {
+    const card = document.createElement('button');
+    card.className = 'tool-card';
+    card.innerHTML = `<div class="tool-icon pink">${t.icon}</div><div class="tool-title">${escapeHtml(t.title)}</div>`;
+    card.addEventListener('click', () => openWriteTool(t.id));
+    grid.appendChild(card);
+  });
+}
+
+function openWriteTool(toolId) {
+  const tool = WRITE_TOOLS.find(t => t.id === toolId);
+  if (!tool) return;
+  showPage('writing');
+  $('writeToolsGrid').classList.add('hidden');
+  const active = $('writeActiveTool');
+  active.classList.remove('hidden');
+  active.innerHTML = `
+    <button class="btn-sm" id="writeBack">← رجوع للأدوات</button>
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-bottom:14px;">${tool.icon} ${escapeHtml(tool.title)}</h3>
+      <div class="field">
+        <label class="field-label">النص / الموضوع</label>
+        <textarea class="field-textarea" id="writeInput" placeholder="اكتب هنا..."></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">الطول</label>
+          <select class="field-select" id="writeLength">
+            <option value="short">مختصر</option>
+            <option value="medium" selected>متوسط</option>
+            <option value="long">طويل</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">النبرة</label>
+          <select class="field-select" id="writeTone">
+            <option value="professional">احترافية</option>
+            <option value="friendly">ودودة</option>
+            <option value="formal">رسمية</option>
+            <option value="creative">إبداعية</option>
+            <option value="funny">مرحة</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="writeRunBtn">🚀 تنفيذ</button>
+      <div class="result-box" id="writeResult">النتيجة ستظهر هنا...</div>
+      <div class="btn-row">
+        <button class="btn-sm" id="writeCopyBtn">📋 نسخ</button>
+        <button class="btn-sm danger" id="writeClearBtn">🗑️ مسح</button>
+      </div>
+    </div>
+  `;
+  $('writeBack').onclick = () => {
+    $('writeToolsGrid').classList.remove('hidden');
+    active.classList.add('hidden');
+  };
+  $('writeRunBtn').addEventListener('click', async () => {
+    const text = $('writeInput').value.trim();
+    if (!text) { $('writeResult').textContent = '⚠️ أدخل النص أولاً.'; return; }
+    $('writeResult').textContent = '⏳ جارٍ الكتابة...';
+    const sys = `أنت كاتب محترف. الطول: ${$('writeLength').value}. النبرة: ${$('writeTone').value}. أخرج النص النهائي فقط.`;
+    try {
+      const answer = await callAI({ prompt: `${tool.prompt}\n\nالمحتوى:\n${text}`, systemPrompt: sys });
+      $('writeResult').textContent = answer;
+    } catch (e) { $('writeResult').textContent = '❌ ' + e.message; }
+  });
+  $('writeCopyBtn').onclick = () => copyToClipboard($('writeResult').textContent);
+  $('writeClearBtn').onclick = () => { $('writeInput').value = ''; $('writeResult').textContent = 'النتيجة ستظهر هنا...'; };
+}
+
+function initImageAnalysis() {
+  const dropZone = $('dropZone');
+  const fileInput = $('imageFile');
+  const preview = $('imagePreview');
+  const previewImg = $('previewImg');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = 'var(--purple)';
+    dropZone.style.background = 'rgba(139,92,246,0.08)';
+  });
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.style.borderColor = 'var(--glass-border)';
+    dropZone.style.background = '';
+  });
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = 'var(--glass-border)';
+    dropZone.style.background = '';
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) handleImageFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) handleImageFile(e.target.files[0]);
+  });
+
+  function handleImageFile(file) {
+    if (!file.type.startsWith('image/')) { alert('الرجاء اختيار صورة.'); return; }
+    if (file.size > 8 * 1024 * 1024) { alert('الحجم يجب ألا يتجاوز 8 ميغابايت.'); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      State.selectedImage = { dataUrl: ev.target.result, mimeType: file.type, name: file.name };
+      previewImg.src = ev.target.result;
+      preview.classList.remove('hidden');
+      dropZone.classList.add('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  $('removeImageBtn').addEventListener('click', () => {
+    State.selectedImage = null;
+    preview.classList.add('hidden');
+    dropZone.classList.remove('hidden');
+    fileInput.value = '';
+    previewImg.src = '';
+  });
+
+  $('analyzeImageBtn').addEventListener('click', async () => {
+    if (!State.selectedImage) { alert('الرجاء اختيار صورة أولاً.'); return; }
+    const task = $('imageTask').value;
+    const question = $('imageQuestion').value.trim();
+    const taskMap = {
+      describe: 'صِف الصورة بالتفصيل.',
+      extract: 'استخرج كل النص من الصورة.',
+      translate: 'استخرج النص ثم ترجمه إلى العربية.',
+      explain: 'اشرح المخطط أو الرسم في الصورة.',
+      solve: 'حل المسألة الدراسية مع الخطوات.',
+      custom: question || 'حلل الصورة.',
+    };
+    $('imageResult').textContent = '⏳ جارٍ تحليل الصورة...';
+    try {
+      const answer = await callAI({
+        prompt: taskMap[task] + (question && task !== 'custom' ? `\nسؤال إضافي: ${question}` : ''),
+        systemPrompt: 'أنت خبير في تحليل الصور. أجب بالعربية.',
+        image: State.selectedImage,
+      });
+      $('imageResult').textContent = answer;
+    } catch (e) { $('imageResult').textContent = '❌ ' + e.message; }
+  });
+}
+
+const LANG_NAMES = {
+  auto: 'اكتشاف تلقائي', ar: 'العربية', en: 'الإنجليزية', fr: 'الفرنسية',
+  es: 'الإسبانية', de: 'الألمانية', tr: 'التركية', fa: 'الفارسية', ku: 'الكردية',
+};
+
+function initTranslate() {
+  $('swapLangBtn').addEventListener('click', () => {
+    const from = $('transFrom').value;
+    const to = $('transTo').value;
+    if (from !== 'auto') $('transFrom').value = to;
+    $('transTo').value = from === 'auto' ? 'ar' : from;
+  });
+  $('transBtn').addEventListener('click', () => doTranslate());
+  $('transExplainBtn').addEventListener('click', () => doTranslate('explain'));
+  $('transSimplifyBtn').addEventListener('click', () => doTranslate('simplify'));
+  $('transClearBtn').addEventListener('click', () => {
+    $('transInput').value = '';
+    $('transResult').textContent = 'الترجمة ستظهر هنا...';
+  });
+  $('transCopyBtn').addEventListener('click', () => copyToClipboard($('transResult').textContent));
+
+  async function doTranslate(mode = 'translate') {
+    const text = $('transInput').value.trim();
+    if (!text) { $('transResult').textContent = '⚠️ أدخل النص.'; return; }
+    const from = $('transFrom').value;
+    const to = $('transTo').value;
+    const fromName = LANG_NAMES[from] || from;
+    const toName = LANG_NAMES[to] || to;
+    let prompt;
+    if (mode === 'explain') prompt = `ترجم من ${fromName} إلى ${toName}، ثم اشرح المصطلحات.\n\n${text}`;
+    else if (mode === 'simplify') prompt = `ترجم من ${fromName} إلى ${toName} بأسلوب مبسط.\n\n${text}`;
+    else prompt = `ترجم من ${fromName} إلى ${toName}. أخرج الترجمة فقط.\n\n${text}`;
+    $('transResult').textContent = '⏳ جارٍ الترجمة...';
+    try {
+      const answer = await callAI({ prompt, systemPrompt: 'أنت مترجم محترف.' });
+      $('transResult').textContent = answer;
+    } catch (e) { $('transResult').textContent = '❌ ' + e.message; }
+  }
+}
+
+function initProjects() {
+  $('projBtn').addEventListener('click', async () => {
+    const type = $('projType').value;
+    const budget = $('projBudget').value.trim();
+    const skills = $('projSkills').value.trim();
+    const time = $('projTime').value.trim();
+    const task = $('projTask').value;
+    if (!budget && !skills) { $('projResult').textContent = '⚠️ أدخل الميزانية أو المهارات.'; return; }
+    const taskPrompts = {
+      ideas: 'اقترح 5 أفكار مشاريع مناسبة.',
+      name: 'اقترح 10 أسماء تجارية إبداعية.',
+      plan: 'أعد خطة عمل أولية.',
+      marketing: 'أعد خطة تسويقية عملية.',
+      ads: 'أنشئ 5 أفكار إعلانات.',
+      swot: 'حلل SWOT.',
+      costs: 'أعد قائمة تكاليف تقديرية (مع التنبيه للتحقق).',
+    };
+    const prompt = `${taskPrompts[task]}\nنوع: ${type}\nميزانية: ${budget}\nمهارات: ${skills}\nوقت: ${time}\nوضح أن الأسعار تحتاج تحقق.`;
+    $('projResult').textContent = '⏳ جارٍ التحليل...';
+    try {
+      const answer = await callAI({ prompt, systemPrompt: 'أنت مستشار أعمال خبير.' });
+      $('projResult').textContent = answer;
+    } catch (e) { $('projResult').textContent = '❌ ' + e.message; }
+  });
+}
+
+function initDecision() {
+  $('decBtn').addEventListener('click', async () => {
+    const situation = $('decSituation').value.trim();
+    const options = $('decOptions').value.trim();
+    const factors = $('decFactors').value.trim();
+    if (!situation || !options) { $('decResult').textContent = '⚠️ أدخل الموقف والخيارات.'; return; }
+    const prompt = `الموقف: ${situation}\nالخيارات: ${options}\nالعوامل: ${factors || 'غير محددة'}\n\nحلل واذكر مميزات وعيوب وتوصية مع توضيح عدم اليقين.`;
+    $('decResult').textContent = '⏳ جارٍ التحليل...';
+    try {
+      const answer = await callAI({ prompt, systemPrompt: 'أنت مستشار قرارات منطقي.' });
+      $('decResult').textContent = answer;
+    } catch (e) { $('decResult').textContent = '❌ ' + e.message; }
+  });
+}
+
+function initCode() {
+  $('codeBtn').addEventListener('click', async () => {
+    const code = $('codeInput').value.trim();
+    if (!code) { $('codeResult').textContent = '⚠️ أدخل الكود.'; return; }
+    const lang = $('codeLang').value;
+    const task = $('codeTask').value;
+    const taskMap = {
+      explain: 'اشرح الكود سطراً بسطر.',
+      debug: 'حلل الأخطاء المحتملة.',
+      improve: 'اقترح تحسينات.',
+      example: 'أنشئ مثالاً تعليمياً.',
+      format: 'أعد تنسيق الكود.',
+    };
+    const prompt = `اللغة: ${lang}\nالمهمة: ${taskMap[task]}\n\nالكود:\n\`\`\`\n${code}\n\`\`\``;
+    $('codeResult').textContent = '⏳ جارٍ التحليل...';
+    try {
+      const answer = await callAI({ prompt, systemPrompt: 'أنت مهندس برمجيات خبير.' });
+      $('codeResult').textContent = answer;
+    } catch (e) { $('codeResult').textContent = '❌ ' + e.message; }
+  });
+  $('codeCopyBtn').addEventListener('click', () => copyToClipboard($('codeResult').textContent));
+}
+
+function renderTasks() {
+  const list = $('tasksList');
+  list.innerHTML = '';
+  const sorted = [...State.tasks].sort((a, b) => {
+    const order = { high: 0, med: 1, low: 2 };
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    return order[a.priority] - order[b.priority];
+  });
+  if (sorted.length === 0) {
+    list.innerHTML = '<p style="color:var(--gray-400);text-align:center;padding:10px;">لا توجد مهام.</p>';
+    return;
+  }
+  sorted.forEach(t => {
+    const item = document.createElement('div');
+    item.className = 'task-item' + (t.done ? ' done' : '');
+    const check = document.createElement('div');
+    check.className = 'task-check';
+    check.textContent = t.done ? '✓' : '';
+    check.addEventListener('click', () => { t.done = !t.done; saveTasks(); renderTasks(); });
+    const text = document.createElement('div');
+    text.className = 'task-text';
+    text.textContent = t.text;
+    const prio = document.createElement('span');
+    prio.className = 'task-priority priority-' + t.priority;
+    prio.textContent = { high: 'عالية', med: 'متوسطة', low: 'منخفضة' }[t.priority];
+    const del = document.createElement('button');
+    del.className = 'btn-sm danger';
+    del.textContent = '🗑️';
+    del.addEventListener('click', () => {
+      State.tasks = State.tasks.filter(x => x.id !== t.id);
+      saveTasks();
+      renderTasks();
+    });
+    item.appendChild(check);
+    item.appendChild(text);
+    item.appendChild(prio);
+    item.appendChild(del);
+    list.appendChild(item);
+  });
+}
+function saveTasks() { Store.set('tasks', State.tasks); }
+function initTasks() {
+  $('addTaskBtn').addEventListener('click', () => {
+    const text = $('taskInput').value.trim();
+    if (!text) return;
+    State.tasks.push({ id: uid(), text, priority: $('taskPriority').value, done: false, created: Date.now() });
+    $('taskInput').value = '';
+    saveTasks();
+    renderTasks();
+  });
+  $('taskInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('addTaskBtn').click(); });
+}
+
+const Timer = { interval: null, seconds: 25 * 60, mode: 'study', running: false };
+function initTimer() {
+  const display = $('timerDisplay');
+  const label = $('timerLabel');
+  function render() {
+    const m = Math.floor(Timer.seconds / 60).toString().padStart(2, '0');
+    const s = (Timer.seconds % 60).toString().padStart(2, '0');
+    display.textContent = `${m}:${s}`;
+    label.textContent = Timer.mode === 'study' ? 'وضع الدراسة' : 'استراحة';
+  }
+  $('timerStart').addEventListener('click', () => {
+    if (Timer.running) {
+      clearInterval(Timer.interval);
+      Timer.running = false;
+      $('timerStart').textContent = '▶ استمرار';
+    } else {
+      Timer.running = true;
+      $('timerStart').textContent = '⏸ إيقاف';
+      Timer.interval = setInterval(() => {
+        Timer.seconds--;
+        if (Timer.seconds <= 0) {
+          clearInterval(Timer.interval);
+          Timer.running = false;
+          $('timerStart').textContent = '▶ بدء';
+          if (Timer.mode === 'study') {
+            alert('انتهت الدراسة! استراحة 5 دقائق.');
+            Timer.mode = 'break';
+            Timer.seconds = 5 * 60;
+          } else {
+            alert('انتهت الاستراحة! جلسة جديدة.');
+            Timer.mode = 'study';
+            Timer.seconds = 25 * 60;
+          }
+        }
+        render();
+      }, 1000);
+    }
+  });
+  $('timerReset').addEventListener('click', () => {
+    clearInterval(Timer.interval);
+    Timer.running = false;
+    Timer.mode = 'study';
+    Timer.seconds = 25 * 60;
+    $('timerStart').textContent = '▶ بدء';
+    render();
+  });
+  render();
+}
+
+function initQuickNotes() {
+  const ta = $('quickNotes');
+  const save = debounce(() => { Store.set('quickNotes', ta.value); }, 500);
+  ta.addEventListener('input', save);
+  $('saveNotesBtn').addEventListener('click', () => {
+    Store.set('quickNotes', ta.value);
+    $('saveNotesBtn').textContent = '✅ تم';
+    setTimeout(() => { $('saveNotesBtn').textContent = '💾 حفظ الآن'; }, 1500);
+  });
+  $('clearNotesBtn').addEventListener('click', () => {
+    if (!confirm('مسح الملاحظات؟')) return;
+    ta.value = '';
+    Store.set('quickNotes', '');
+  });
+}
+
+function renderGoals() {
+  const list = $('goalsList');
+  list.innerHTML = '';
+  if (State.goals.length === 0) {
+    list.innerHTML = '<p style="color:var(--gray-400);text-align:center;padding:10px;">لا توجد أهداف.</p>';
+    return;
+  }
+  State.goals.forEach(g => {
+    const item = document.createElement('div');
+    item.className = 'task-item' + (g.done ? ' done' : '');
+    const check = document.createElement('div');
+    check.className = 'task-check';
+    check.textContent = g.done ? '✓' : '';
+    check.addEventListener('click', () => { g.done = !g.done; saveGoals(); renderGoals(); });
+    const text = document.createElement('div');
+    text.className = 'task-text';
+    text.textContent = g.text + (g.date ? ` (${g.date})` : '');
+    const del = document.createElement('button');
+    del.className = 'btn-sm danger';
+    del.textContent = '🗑️';
+    del.addEventListener('click', () => {
+      State.goals = State.goals.filter(x => x.id !== g.id);
+      saveGoals();
+      renderGoals();
+    });
+    item.appendChild(check);
+    item.appendChild(text);
+    item.appendChild(del);
+    list.appendChild(item);
+  });
+}
+function saveGoals() { Store.set('goals', State.goals); }
+function initGoals() {
+  $('addGoalBtn').addEventListener('click', () => {
+    const text = $('goalInput').value.trim();
+    if (!text) return;
+    State.goals.push({ id: uid(), text, date: $('goalDate').value, done: false });
+    $('goalInput').value = '';
+    $('goalDate').value = '';
+    saveGoals();
+    renderGoals();
+  });
+}
+
+function initBackup() {
+  $('exportDataBtn').addEventListener('click', () => {
+    const data = {
+      version: 1,
+      exported: new Date().toISOString(),
+      tasks: State.tasks,
+      goals: State.goals,
+      favorites: State.favorites,
+      chatHistoryList: State.chatHistoryList,
+      quickNotes: Store.get('quickNotes', ''),
+      settings: { lang: State.lang, theme: State.theme, fontScale: State.fontScale },
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `zakaa-backup-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    $('backupStatus').textContent = '✅ تم التصدير.';
+  });
+  $('importDataBtn').addEventListener('click', () => $('importFileInput').click());
+  $('importFileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data || typeof data !== 'object') throw new Error('صيغة غير صالحة');
+        if (data.tasks) State.tasks = Array.isArray(data.tasks) ? data.tasks : State.tasks;
+        if (data.goals) State.goals = Array.isArray(data.goals) ? data.goals : State.goals;
+        if (data.favorites) State.favorites = Array.isArray(data.favorites) ? data.favorites : State.favorites;
+        if (data.chatHistoryList) State.chatHistoryList = Array.isArray(data.chatHistoryList) ? data.chatHistoryList : State.chatHistoryList;
+        if (data.quickNotes) Store.set('quickNotes', String(data.quickNotes));
+        saveTasks(); saveGoals();
+        Store.set('favorites', State.favorites);
+        Store.set('chatHistoryList', State.chatHistoryList);
+        renderTasks(); renderGoals(); renderFavorites();
+        if (data.quickNotes) $('quickNotes').value = String(data.quickNotes);
+        $('backupStatus').textContent = '✅ تم الاستيراد.';
+      } catch (err) { $('backupStatus').textContent = '❌ ' + err.message; }
+    };
+    reader.readAsText(file);
+  });
+  $('clearAllDataBtn').addEventListener('click', () => {
+    if (!confirm('حذف جميع البيانات المحلية؟')) return;
+    Store.clearAll();
+    State.tasks = []; State.goals = []; State.favorites = []; State.chatHistoryList = [];
+    renderTasks(); renderGoals(); renderFavorites();
+    $('quickNotes').value = '';
+    $('backupStatus').textContent = '✅ تم المسح.';
+  });
+}
+
+const FREE_TOOLS = [
+  { id: 'free_calc', icon: '🧮', title: 'الحاسبة' },
+  { id: 'free_percent', icon: '％', title: 'النسب المئوية' },
+  { id: 'free_age', icon: '🎂', title: 'حساب العمر' },
+  { id: 'free_datediff', icon: '📅', title: 'الفرق بين تاريخين' },
+  { id: 'free_length', icon: '📏', title: 'تحويل الطول' },
+  { id: 'free_weight', icon: '⚖️', title: 'تحويل الوزن' },
+  { id: 'free_temp', icon: '🌡️', title: 'درجات الحرارة' },
+  { id: 'free_time', icon: '⏰', title: 'تحويل الزمن' },
+  { id: 'free_words', icon: '🔢', title: 'عداد الكلمات' },
+  { id: 'free_paragraphs', icon: '¶', title: 'عداد الفقرات' },
+  { id: 'free_diff', icon: '🔍', title: 'مقارنة نصين' },
+  { id: 'free_format', icon: '✨', title: 'تنسيق النصوص' },
+  { id: 'free_case', icon: 'Aa', title: 'UPPER / lower' },
+  { id: 'free_pass', icon: '🔐', title: 'كلمة مرور' },
+  { id: 'free_qr', icon: '📱', title: 'QR Code' },
+  { id: 'free_imgcompress', icon: '🗜️', title: 'ضغط الصور' },
+  { id: 'free_imgresize', icon: '📐', title: 'تغيير الأبعاد' },
+  { id: 'free_imgconvert', icon: '🔄', title: 'تحويل الصيغة' },
+  { id: 'free_notes', icon: '📝', title: 'ملاحظات محلية' },
+  { id: 'free_random', icon: '🎲', title: 'نص عشوائي' },
+];
+
+function renderFreeTools() {
+  const grid = $('freeToolsGrid');
+  grid.innerHTML = '';
+  FREE_TOOLS.forEach(t => {
+    const card = document.createElement('button');
+    card.className = 'tool-card';
+    const isFav = State.favorites.includes(t.id);
+    card.innerHTML = `
+      <span class="fav-btn ${isFav ? 'active' : ''}" data-fav="${t.id}">${isFav ? '⭐' : '☆'}</span>
+      <div class="tool-icon turquoise">${t.icon}</div>
+      <div class="tool-title">${escapeHtml(t.title)}</div>
+    `;
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('[data-fav]')) { e.stopPropagation(); toggleFavorite(t.id); return; }
+      openFreeTool(t.id);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function openFreeTool(toolId) {
+  const tool = FREE_TOOLS.find(t => t.id === toolId);
+  if (!tool) return;
+  showPage('freetools');
+  $('freeToolsGrid').classList.add('hidden');
+  const active = $('freeActiveTool');
+  active.classList.remove('hidden');
+  active.innerHTML = `
+    <button class="btn-sm" id="freeBack">← رجوع للأدوات</button>
+    <div class="card" style="margin-top:16px;" id="freeToolCard"></div>
+  `;
+  $('freeBack').onclick = () => {
+    $('freeToolsGrid').classList.remove('hidden');
+    active.classList.add('hidden');
+  };
+  renderFreeToolBody(tool, $('freeToolCard'));
+}
+
+function renderFreeToolBody(tool, container) {
+  const h3 = document.createElement('h3');
+  h3.style.marginBottom = '14px';
+  h3.textContent = `${tool.icon} ${tool.title}`;
+  container.appendChild(h3);
+  const id = tool.id;
+
+  if (id === 'free_calc') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="number" class="field-input" id="calcA" placeholder="الرقم 1">
+        <select class="field-select" id="calcOp">
+          <option value="+">+</option><option value="-">−</option>
+          <option value="*">×</option><option value="/">÷</option>
+        </select>
+      </div>
+      <div class="field"><input type="number" class="field-input" id="calcB" placeholder="الرقم 2"></div>
+      <button class="btn btn-primary" id="calcRun">= احسب</button>
+      <div class="result-box" id="calcOut">0</div>
+    `;
+    $('calcRun').onclick = () => {
+      const a = parseFloat($('calcA').value) || 0;
+      const b = parseFloat($('calcB').value) || 0;
+      const op = $('calcOp').value;
+      let r;
+      if (op === '+') r = a + b;
+      else if (op === '-') r = a - b;
+      else if (op === '*') r = a * b;
+      else { if (b === 0) { $('calcOut').textContent = 'خطأ: قسمة على صفر'; return; } r = a / b; }
+      $('calcOut').textContent = String(r);
+    };
+  }
+  else if (id === 'free_percent') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="number" class="field-input" id="pctA" placeholder="النسبة %">
+        <input type="number" class="field-input" id="pctB" placeholder="من الرقم">
+      </div>
+      <button class="btn btn-primary" id="pctRun">احسب</button>
+      <div class="result-box" id="pctOut">0</div>
+    `;
+    $('pctRun').onclick = () => {
+      const a = parseFloat($('pctA').value) || 0;
+      const b = parseFloat($('pctB').value) || 0;
+      $('pctOut').textContent = ((a / 100) * b).toString();
+    };
+  }
+  else if (id === 'free_age') {
+    container.innerHTML += `
+      <div class="field"><label class="field-label">تاريخ الميلاد</label>
+        <input type="date" class="field-input" id="ageInput"></div>
+      <button class="btn btn-primary" id="ageRun">احسب</button>
+      <div class="result-box" id="ageOut">--</div>
+    `;
+    $('ageRun').onclick = () => {
+      const d = new Date($('ageInput').value);
+      if (isNaN(d)) { $('ageOut').textContent = 'تاريخ غير صالح.'; return; }
+      const now = new Date();
+      let years = now.getFullYear() - d.getFullYear();
+      let months = now.getMonth() - d.getMonth();
+      let days = now.getDate() - d.getDate();
+      if (days < 0) { months--; days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+      if (months < 0) { years--; months += 12; }
+      $('ageOut').textContent = `${years} سنة، ${months} شهر، ${days} يوم`;
+    };
+  }
+  else if (id === 'free_datediff') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="date" class="field-input" id="ddFrom">
+        <input type="date" class="field-input" id="ddTo">
+      </div>
+      <button class="btn btn-primary" id="ddRun">احسب</button>
+      <div class="result-box" id="ddOut">--</div>
+    `;
+    $('ddRun').onclick = () => {
+      const a = new Date($('ddFrom').value);
+      const b = new Date($('ddTo').value);
+      if (isNaN(a) || isNaN(b)) { $('ddOut').textContent = 'تواريخ غير صالحة.'; return; }
+      const days = Math.floor(Math.abs(b - a) / 86400000);
+      $('ddOut').textContent = `${days} يوم (${Math.floor(days/7)} أسبوع)`;
+    };
+  }
+  else if (id === 'free_length') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="number" class="field-input" id="lenVal" placeholder="القيمة">
+        <select class="field-select" id="lenUnit">
+          <option value="m">متر</option><option value="km">كيلومتر</option>
+          <option value="cm">سنتيمتر</option><option value="mi">ميل</option>
+          <option value="ft">قدم</option><option value="in">إنش</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="lenRun">تحويل</button>
+      <div class="result-box" id="lenOut">--</div>
+    `;
+    $('lenRun').onclick = () => {
+      const v = parseFloat($('lenVal').value) || 0;
+      const toM = { m: 1, km: 1000, cm: 0.01, mi: 1609.344, ft: 0.3048, in: 0.0254 };
+      const m = v * toM[$('lenUnit').value];
+      $('lenOut').textContent = `${m.toFixed(3)} م | ${(m/1000).toFixed(4)} كم | ${(m*100).toFixed(2)} سم | ${(m/1609.344).toFixed(4)} ميل | ${(m/0.3048).toFixed(2)} قدم | ${(m/0.0254).toFixed(2)} إنش`;
+    };
+  }
+  else if (id === 'free_weight') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="number" class="field-input" id="wVal" placeholder="القيمة">
+        <select class="field-select" id="wUnit">
+          <option value="kg">كيلوغرام</option><option value="g">غرام</option>
+          <option value="lb">باوند</option><option value="oz">أونصة</option>
+          <option value="t">طن</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="wRun">تحويل</button>
+      <div class="result-box" id="wOut">--</div>
+    `;
+    $('wRun').onclick = () => {
+      const v = parseFloat($('wVal').value) || 0;
+      const toKg = { kg: 1, g: 0.001, lb: 0.453592, oz: 0.0283495, t: 1000 };
+      const kg = v * toKg[$('wUnit').value];
+      $('wOut').textContent = `${kg.toFixed(3)} كغ | ${(kg*1000).toFixed(1)} غ | ${(kg*2.20462).toFixed(3)} باوند | ${(kg*35.274).toFixed(2)} أونصة | ${(kg/1000).toFixed(4)} طن`;
+    };
+  }
+  else if (id === 'free_temp') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="number" class="field-input" id="tVal" placeholder="القيمة">
+        <select class="field-select" id="tUnit">
+          <option value="C">مئوية °C</option>
+          <option value="F">فهرنهايت °F</option>
+          <option value="K">كلفن K</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="tRun">تحويل</button>
+      <div class="result-box" id="tOut">--</div>
+    `;
+    $('tRun').onclick = () => {
+      const v = parseFloat($('tVal').value) || 0;
+      let c;
+      const u = $('tUnit').value;
+      if (u === 'C') c = v;
+      else if (u === 'F') c = (v - 32) * 5/9;
+      else c = v - 273.15;
+      $('tOut').textContent = `${c.toFixed(2)} °C | ${(c*9/5+32).toFixed(2)} °F | ${(c+273.15).toFixed(2)} K`;
+    };
+  }
+  else if (id === 'free_time') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="number" class="field-input" id="timeVal" placeholder="القيمة">
+        <select class="field-select" id="timeUnit">
+          <option value="s">ثانية</option><option value="m">دقيقة</option>
+          <option value="h">ساعة</option><option value="d">يوم</option>
+          <option value="w">أسبوع</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="timeRun">تحويل</button>
+      <div class="result-box" id="timeOut">--</div>
+    `;
+    $('timeRun').onclick = () => {
+      const v = parseFloat($('timeVal').value) || 0;
+      const toS = { s: 1, m: 60, h: 3600, d: 86400, w: 604800 };
+      const s = v * toS[$('timeUnit').value];
+      $('timeOut').textContent = `${s} ث | ${(s/60).toFixed(2)} د | ${(s/3600).toFixed(3)} س | ${(s/86400).toFixed(3)} ي | ${(s/604800).toFixed(4)} أ`;
+    };
+  }
+  else if (id === 'free_words') {
+    container.innerHTML += `
+      <div class="field"><textarea class="field-textarea" id="wordsInput" placeholder="اكتب النص..."></textarea></div>
+      <button class="btn btn-primary" id="wordsRun">عدّ</button>
+      <div class="result-box" id="wordsOut">--</div>
+    `;
+    $('wordsRun').onclick = () => {
+      const t = $('wordsInput').value;
+      const chars = t.length;
+      const charsNoSpace = t.replace(/\s/g, '').length;
+      const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+      const lines = t.split(/\n/).length;
+      const sentences = (t.match(/[.!?؟。]+/g) || []).length;
+      $('wordsOut').textContent = `الكلمات: ${words}\nالحروف: ${chars} (بدون مسافات: ${charsNoSpace})\nالأسطر: ${lines}\nالجمل: ${sentences}`;
+    };
+  }
+  else if (id === 'free_paragraphs') {
+    container.innerHTML += `
+      <div class="field"><textarea class="field-textarea" id="paraInput" placeholder="اكتب النص..."></textarea></div>
+      <button class="btn btn-primary" id="paraRun">عدّ</button>
+      <div class="result-box" id="paraOut">--</div>
+    `;
+    $('paraRun').onclick = () => {
+      const t = $('paraInput').value.trim();
+      const paras = t ? t.split(/\n\s*\n/).filter(p => p.trim()).length : 0;
+      $('paraOut').textContent = `عدد الفقرات: ${paras}`;
+    };
+  }
+  else if (id === 'free_diff') {
+    container.innerHTML += `
+      <div class="field-row">
+        <textarea class="field-textarea" id="diffA" placeholder="النص الأول"></textarea>
+        <textarea class="field-textarea" id="diffB" placeholder="النص الثاني"></textarea>
+      </div>
+      <button class="btn btn-primary" id="diffRun">قارن</button>
+      <div class="result-box" id="diffOut">--</div>
+    `;
+    $('diffRun').onclick = () => {
+      const a = $('diffA').value;
+      const b = $('diffB').value;
+      if (a === b) { $('diffOut').textContent = '✅ النصان متطابقان.'; return; }
+      const la = a.split('\n');
+      const lb = b.split('\n');
+      const out = [];
+      const max = Math.max(la.length, lb.length);
+      for (let i = 0; i < max; i++) {
+        const x = la[i] ?? '', y = lb[i] ?? '';
+        if (x !== y) out.push(`سطر ${i+1}:\n  - الأول: ${x || '(فارغ)'}\n  + الثاني: ${y || '(فارغ)'}`);
+      }
+      $('diffOut').textContent = out.length ? out.join('\n\n') : 'لا فروق جوهرية.';
+    };
+  }
+  else if (id === 'free_format') {
+    container.innerHTML += `
+      <div class="field"><textarea class="field-textarea" id="fmtInput" placeholder="النص هنا..."></textarea></div>
+      <div class="btn-row">
+        <button class="btn-sm" data-fmt="trim">إزالة فراغات الأطراف</button>
+        <button class="btn-sm" data-fmt="collapse">توحيد المسافات</button>
+        <button class="btn-sm" data-fmt="noempty">حذف الأسطر الفارغة</button>
+        <button class="btn-sm" data-fmt="reverse">عكس الأسطر</button>
+      </div>
+      <div class="result-box" id="fmtOut">--</div>
+    `;
+    container.querySelectorAll('[data-fmt]').forEach(btn => {
+      btn.onclick = () => {
+        let t = $('fmtInput').value;
+        const f = btn.dataset.fmt;
+        if (f === 'trim') t = t.trim();
+        else if (f === 'collapse') t = t.replace(/[ \t]+/g, ' ');
+        else if (f === 'noempty') t = t.split('\n').filter(l => l.trim()).join('\n');
+        else if (f === 'reverse') t = t.split('\n').reverse().join('\n');
+        $('fmtOut').textContent = t;
+      };
+    });
+  }
+  else if (id === 'free_case') {
+    container.innerHTML += `
+      <div class="field"><textarea class="field-textarea" id="caseInput" placeholder="النص هنا..."></textarea></div>
+      <div class="btn-row">
+        <button class="btn-sm" data-case="upper">UPPERCASE</button>
+        <button class="btn-sm" data-case="lower">lowercase</button>
+        <button class="btn-sm" data-case="title">Title Case</button>
+      </div>
+      <div class="result-box" id="caseOut">--</div>
+    `;
+    container.querySelectorAll('[data-case]').forEach(btn => {
+      btn.onclick = () => {
+        let t = $('caseInput').value;
+        const c = btn.dataset.case;
+        if (c === 'upper') t = t.toUpperCase();
+        else if (c === 'lower') t = t.toLowerCase();
+        else t = t.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+        $('caseOut').textContent = t;
+      };
+    });
+  }
+  else if (id === 'free_pass') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="number" class="field-input" id="passLen" value="16" min="4" max="128">
+        <button class="btn-sm" id="passRun">🎲 توليد</button>
+      </div>
+      <div class="result-box" id="passOut">--</div>
+      <div class="btn-row"><button class="btn-sm" id="passCopy">📋 نسخ</button></div>
+      <p style="font-size:0.8rem;color:var(--gray-400);margin-top:10px;">⚠️ لا تُحفظ كلمة المرور تلقائياً.</p>
+    `;
+    $('passRun').onclick = () => {
+      const len = Math.min(128, Math.max(4, parseInt($('passLen').value) || 16));
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()-_=+[]{}';
+      const arr = new Uint32Array(len);
+      crypto.getRandomValues(arr);
+      let p = '';
+      for (let i = 0; i < len; i++) p += chars[arr[i] % chars.length];
+      $('passOut').textContent = p;
+    };
+    $('passCopy').onclick = () => copyToClipboard($('passOut').textContent);
+  }
+  else if (id === 'free_qr') {
+    container.innerHTML += `
+      <div class="field"><input type="text" class="field-input" id="qrText" placeholder="النص أو الرابط..."></div>
+      <button class="btn btn-primary" id="qrRun">توليد QR</button>
+      <div id="qrOut" style="text-align:center;margin-top:16px;"></div>
+      <p style="font-size:0.8rem;color:var(--gray-400);margin-top:10px;">يُستخدم API خارجي مجاني.</p>
+    `;
+    $('qrRun').onclick = () => {
+      const t = $('qrText').value.trim();
+      if (!t) return;
+      const img = document.createElement('img');
+      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(t);
+      img.alt = 'QR';
+      img.style.maxWidth = '100%';
+      const out = $('qrOut');
+      out.innerHTML = '';
+      out.appendChild(img);
+    };
+  }
+  else if (id === 'free_imgcompress') {
+    container.innerHTML += `
+      <div class="field"><input type="file" class="field-input" id="compFile" accept="image/*"></div>
+      <div class="field">
+        <label class="field-label">الجودة: <span id="compQualityVal">70</span>%</label>
+        <input type="range" id="compQuality" min="10" max="100" value="70" style="width:100%;">
+      </div>
+      <button class="btn btn-primary" id="compRun">🗜️ ضغط</button>
+      <div id="compOut" style="margin-top:16px;text-align:center;"></div>
+    `;
+    $('compQuality').oninput = () => $('compQualityVal').textContent = $('compQuality').value;
+    $('compRun').onclick = () => {
+      const file = $('compFile').files[0];
+      if (!file) { $('compOut').textContent = 'اختر صورة.'; return; }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const out = $('compOut');
+            out.innerHTML = '';
+            const p = document.createElement('p');
+            p.textContent = `الأصلي: ${(file.size/1024).toFixed(1)}KB → المضغوط: ${(blob.size/1024).toFixed(1)}KB`;
+            out.appendChild(p);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'compressed.jpg';
+            link.className = 'btn btn-primary';
+            link.textContent = '⬇️ تحميل';
+            out.appendChild(link);
+          }, 'image/jpeg', parseInt($('compQuality').value) / 100);
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+  else if (id === 'free_imgresize') {
+    container.innerHTML += `
+      <div class="field"><input type="file" class="field-input" id="resFile" accept="image/*"></div>
+      <div class="field-row">
+        <input type="number" class="field-input" id="resW" placeholder="العرض px">
+        <input type="number" class="field-input" id="resH" placeholder="الارتفاع px">
+      </div>
+      <button class="btn btn-primary" id="resRun">📐 تغيير</button>
+      <div id="resOut" style="margin-top:16px;text-align:center;"></div>
+    `;
+    $('resRun').onclick = () => {
+      const file = $('resFile').files[0];
+      if (!file) { $('resOut').textContent = 'اختر صورة.'; return; }
+      const w = parseInt($('resW').value);
+      const h = parseInt($('resH').value);
+      if (!w || !h) { $('resOut').textContent = 'أدخل الأبعاد.'; return; }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const out = $('resOut');
+            out.innerHTML = '';
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'resized.png';
+            a.className = 'btn btn-primary';
+            a.textContent = '⬇️ تحميل';
+            out.appendChild(a);
+          }, 'image/png');
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+  else if (id === 'free_imgconvert') {
+    container.innerHTML += `
+      <div class="field"><input type="file" class="field-input" id="convFile" accept="image/*"></div>
+      <div class="field">
+        <label class="field-label">إلى صيغة</label>
+        <select class="field-select" id="convFormat">
+          <option value="image/png">PNG</option>
+          <option value="image/jpeg">JPEG</option>
+          <option value="image/webp">WebP</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="convRun">🔄 تحويل</button>
+      <div id="convOut" style="margin-top:16px;text-align:center;"></div>
+    `;
+    $('convRun').onclick = () => {
+      const file = $('convFile').files[0];
+      if (!file) { $('convOut').textContent = 'اختر صورة.'; return; }
+      const format = $('convFormat').value;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          canvas.toBlob(blob => {
+            if (!blob) { $('convOut').textContent = 'الصيغة غير مدعومة.'; return; }
+            const url = URL.createObjectURL(blob);
+            const ext = format.split('/')[1];
+            const out = $('convOut');
+            out.innerHTML = '';
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'converted.' + ext;
+            a.className = 'btn btn-primary';
+            a.textContent = '⬇️ تحميل';
+            out.appendChild(a);
+          }, format, 0.9);
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+  else if (id === 'free_notes') {
+    const saved = Store.get('localNotes', '');
+    container.innerHTML += `
+      <div class="field"><textarea class="field-textarea" id="localNotes" placeholder="ملاحظاتك...">${escapeHtml(saved)}</textarea></div>
+      <div class="btn-row">
+        <button class="btn-sm" id="localNotesSave">💾 حفظ</button>
+        <button class="btn-sm danger" id="localNotesClear">🗑️ مسح</button>
+      </div>
+    `;
+    $('localNotesSave').onclick = () => {
+      Store.set('localNotes', $('localNotes').value);
+      alert('تم الحفظ.');
+    };
+    $('localNotesClear').onclick = () => {
+      if (!confirm('مسح الملاحظات؟')) return;
+      $('localNotes').value = '';
+      Store.set('localNotes', '');
+    };
+  }
+  else if (id === 'free_random') {
+    container.innerHTML += `
+      <div class="field-row">
+        <input type="number" class="field-input" id="randLen" value="100" min="1">
+        <select class="field-select" id="randType">
+          <option value="words">كلمات</option>
+          <option value="chars">أحرف</option>
+          <option value="paragraphs">فقرات</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="randRun">🎲 توليد</button>
+      <div class="result-box" id="randOut">--</div>
+    `;
+    $('randRun').onclick = () => {
+      const len = Math.min(2000, parseInt($('randLen').value) || 100);
+      const type = $('randType').value;
+      const words = ['lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit','sed','do','eiusmod','tempor','incididunt','labore','magna','aliqua','enim','minim','veniam','quis','nostrud'];
+      let out = '';
+      if (type === 'words') {
+        const arr = [];
+        for (let i = 0; i < len; i++) arr.push(words[Math.floor(Math.random()*words.length)]);
+        out = arr.join(' ');
+      } else if (type === 'chars') {
+        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ';
+        for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random()*chars.length)];
+      } else {
+        const p = Math.max(1, Math.floor(len / 30));
+        for (let i = 0; i < p; i++) {
+          const arr = [];
+          for (let j = 0; j < 25; j++) arr.push(words[Math.floor(Math.random()*words.length)]);
+          out += arr.join(' ') + '.\n\n';
+        }
+      }
+      $('randOut').textContent = out;
+    };
+  }
+}
+
+function copyToClipboard(text) {
+  if (!text) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.createElement('div');
+      toast.textContent = '✅ تم النسخ';
+      toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--grad-primary);color:white;padding:10px 20px;border-radius:10px;z-index:9999;font-weight:700;';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1500);
+    }).catch(() => alert('تعذر النسخ.'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); alert('تم النسخ.'); } catch (e) { alert('تعذر النسخ.'); }
+    ta.remove();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initGate();
+  initNav();
+  initSettings();
+  initSearch();
+  initChat();
+  initHomeAsk();
+  initImageAnalysis();
+  initTranslate();
+  initProjects();
+  initDecision();
+  initCode();
+  initTasks();
+  initGoals();
+  initBackup();
+});
+</script>
+</body>
+</html>
