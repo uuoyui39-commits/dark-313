@@ -629,8 +629,7 @@ html[dir="ltr"] .search-box input { padding: 12px 46px 12px 16px; }
       <div class="footer">
         <strong>ZAKAA AI — ذكاء</strong> · منصة ذكاء اصطناعي شاملة<br>
         خصوصيتك تهمنا: لا نطلب تسجيل دخول، ولا نجمع بريدك أو هاتفك. بياناتك المحلية تُحفظ في متصفحك فقط.<br>
-        باستخدامك ميزات الذكاء الاصطناعي، تُرسل طلباتك إلى خدمة Gemini عبر Cloudflare Worker.<br>
-        بوابة تيليجرام قيد على واجهة الاستخدام فقط ولا تتحقق من العضوية الفعلية.
+        باستخدامك ميزات الذكاء الاصطناعي، تُرسل طلباتك مباشرة إلى خدمة Google Gemini.
       </div>
     </section>
 
@@ -994,13 +993,10 @@ html[dir="ltr"] .search-box input { padding: 12px 46px 12px 16px; }
         <div class="settings-group">
           <div class="settings-row">
             <div>
-              <div class="settings-label">عنوان Cloudflare Worker</div>
-              <div class="settings-hint">رابط الـ Worker الذي يتصل بـ Gemini API</div>
+              <div class="settings-label">خدمة الذكاء الاصطناعي</div>
+              <div class="settings-hint">اتصال مباشر بـ Google Gemini API من المتصفح</div>
             </div>
           </div>
-          <input type="text" class="field-input" id="workerUrlInput" value="https://orange-cell-4feb.uuoyui39.workers.dev" readonly dir="ltr" style="margin-top:10px;">
-          <button class="btn-sm" id="saveWorkerUrl" style="margin-top:8px;">💾 حفظ</button>
-          <div id="workerUrlStatus" style="margin-top:8px;font-size:0.85rem;"></div>
         </div>
         <div class="settings-group">
           <div class="settings-row">
@@ -1016,8 +1012,7 @@ html[dir="ltr"] .search-box input { padding: 12px 46px 12px 16px; }
           <div class="settings-hint" style="margin-top:8px;line-height:1.9;">
             منصة ذكاء اصطناعي شاملة بدون تسجيل دخول أو قاعدة بيانات.<br>
             المحادثات والبيانات تُحفظ محلياً في متصفحك فقط.<br>
-            بوابة تيليجرام قيد واجهة فقط ولا تتحقق من العضوية الفعلية.<br>
-            ميزات الذكاء الاصطناعي ترسل طلباتك إلى Gemini عبر Worker.
+            ميزات الذكاء الاصطناعي ترسل طلباتك مباشرة إلى Google Gemini.
           </div>
         </div>
       </div>
@@ -1039,7 +1034,12 @@ html[dir="ltr"] .search-box input { padding: 12px 46px 12px 16px; }
 <script>
 'use strict';
 
-const WORKER_URL = "https://orange-cell-4feb.uuoyui39.workers.dev";
+// ====== إعدادات Google Gemini (اتصال مباشر من المتصفح) ======
+const GEMINI_API_KEY = "AQ.Ab8RN6J5vpw_mrFRtWykqkErCFhigRnjhfXS6PDwGQbhiCsFFg";
+const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
+// ترتيب المحاولة: إن كان النموذج غير متاح (404) ننتقل تلقائياً للتالي ونتذكر النموذج الناجح.
+const GEMINI_MODELS = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-1.5-flash"];
+let GEMINI_ACTIVE_MODEL = null;
 
 const State = {
   currentPage: 'home',
@@ -1091,53 +1091,31 @@ const Store = {
   }
 };
 
-function getEffectiveWorkerUrl() {
-  return WORKER_URL;
+function parseDataUrl(dataUrl) {
+  const m = /^data:([^;,]+)?(?:;[^,]*)?;base64,(.*)$/s.exec(String(dataUrl || ''));
+  return m ? { mimeType: m[1] || '', data: m[2] } : null;
 }
 
-function extractAIText(data) {
-  if (data == null) return '';
-  if (typeof data === 'string') return data;
-  const keys = ['text', 'response', 'reply', 'result', 'answer', 'output', 'content', 'message'];
-  for (const k of keys) {
-    if (typeof data[k] === 'string' && data[k].trim()) return data[k];
-  }
-  // صيغة Gemini الخام
-  if (Array.isArray(data.candidates) && data.candidates[0]) {
-    const parts = data.candidates[0].content && data.candidates[0].content.parts;
-    if (Array.isArray(parts)) {
-      const t = parts.map(p => (p && typeof p.text === 'string') ? p.text : '').join('');
-      if (t.trim()) return t;
-    }
-  }
-  // صيغة OpenAI
-  if (Array.isArray(data.choices) && data.choices[0]) {
-    const c = data.choices[0];
-    const t = (c.message && c.message.content) || c.text;
-    if (typeof t === 'string' && t.trim()) return t;
-  }
-  // غلاف data / result متداخل
-  for (const k of ['data', 'result', 'response']) {
-    if (data[k] && typeof data[k] === 'object') {
-      const t = extractAIText(data[k]);
-      if (t) return t;
-    }
-  }
-  return '';
+function extractGeminiText(data) {
+  const cand = data && Array.isArray(data.candidates) ? data.candidates[0] : null;
+  const parts = cand && cand.content && Array.isArray(cand.content.parts) ? cand.content.parts : [];
+  return parts.filter(p => p && typeof p.text === 'string' && !p.thought).map(p => p.text).join('').trim();
 }
 
 async function callAI(opts) {
-  const url = getEffectiveWorkerUrl();
-  if (!url) {
-    throw new Error('رابط Cloudflare Worker غير متوفر.');
+  const parts = [{ text: String(opts.prompt || '').slice(0, 20000) }];
+  if (opts.image && opts.image.dataUrl) {
+    const img = parseDataUrl(opts.image.dataUrl);
+    parts.push({
+      inlineData: {
+        mimeType: opts.image.mimeType || (img && img.mimeType) || 'image/jpeg',
+        data: img ? img.data : '',
+      },
+    });
   }
-  const body = {
-    prompt: String(opts.prompt || '').slice(0, 20000),
-    systemPrompt: String(opts.systemPrompt || '').slice(0, 4000),
-  };
-  if (opts.image && opts.image.dataUrl && opts.image.mimeType) {
-    body.image = { dataUrl: opts.image.dataUrl, mimeType: opts.image.mimeType };
-  }
+  const body = { contents: [{ role: 'user', parts }] };
+  const sys = String(opts.systemPrompt || '').slice(0, 4000);
+  if (sys) body.systemInstruction = { parts: [{ text: sys }] };
   const payload = JSON.stringify(body);
 
   // مهلة 90 ثانية + دعم إيقاف الطلب من المستخدم
@@ -1149,54 +1127,62 @@ async function callAI(opts) {
     else opts.signal.addEventListener('abort', () => ctrl.abort(), { once: true });
   }
 
-  async function post(contentType) {
-    return fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': contentType },
-      body: payload,
-      signal: ctrl.signal,
-    });
-  }
+  const models = GEMINI_ACTIVE_MODEL
+    ? [GEMINI_ACTIVE_MODEL, ...GEMINI_MODELS.filter(m => m !== GEMINI_ACTIVE_MODEL)]
+    : GEMINI_MODELS.slice();
+  let lastError = null;
 
-  let resp;
   try {
-    try {
-      resp = await post('application/json');
-    } catch (e1) {
-      if (e1.name === 'AbortError') throw e1;
-      // احتياط: طلب بسيط بدون preflight (يفيد إن كان الـ Worker لا يعالج OPTIONS)
-      resp = await post('text/plain;charset=UTF-8');
-    }
+    for (const model of models) {
+      const url = `${GEMINI_BASE}${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+      let resp;
+      try {
+        resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          signal: ctrl.signal,
+        });
+      } catch (e) {
+        if (e.name === 'AbortError') throw e;
+        console.error('Gemini network error', e);
+        throw new Error('فشل الاتصال بخدمة Gemini. تحقق من اتصال الإنترنت.');
+      }
 
-    const raw = await resp.text();
-    let data = null;
-    try { data = JSON.parse(raw); } catch (e) { data = null; }
+      const raw = await resp.text();
+      let data = null;
+      try { data = JSON.parse(raw); } catch (e) { data = null; }
 
-    if (!resp.ok) {
-      const detail = data && (typeof data.error === 'string' ? data.error
-        : (data.error && data.error.message) || data.message)
-        || (raw && raw.length < 300 ? raw : '');
-      console.error('Worker error', resp.status, raw);
-      throw new Error(detail ? `خطأ ${resp.status}: ${detail}` : `خطأ HTTP ${resp.status}`);
+      if (!resp.ok) {
+        const apiMsg = data && data.error && data.error.message ? data.error.message : '';
+        const status = data && data.error && data.error.status ? data.error.status : '';
+        console.error('Gemini error', model, resp.status, raw);
+        // النموذج غير متاح/موقوف: جرّب التالي
+        if (resp.status === 404 || /no longer available|not found|not supported for generateContent/i.test(apiMsg)) {
+          lastError = new Error(`النموذج ${model} غير متاح (${resp.status}).`);
+          continue;
+        }
+        if (resp.status === 429) throw new Error('تم تجاوز حد الاستخدام (الحصة) لخدمة Gemini. حاول لاحقاً.');
+        if (resp.status === 400 && /API key|API_KEY/i.test(apiMsg + status)) throw new Error('مفتاح Gemini غير صالح. تحقق من المفتاح.');
+        if (resp.status === 401 || resp.status === 403) throw new Error('رُفض الطلب (' + resp.status + '): ' + (apiMsg || 'تحقق من المفتاح وقيود النطاق (Referrer).'));
+        throw new Error(apiMsg ? `خطأ ${resp.status}: ${apiMsg}` : `خطأ HTTP ${resp.status}`);
+      }
+
+      const text = extractGeminiText(data);
+      if (text) {
+        GEMINI_ACTIVE_MODEL = model;
+        return text;
+      }
+      const block = data && data.promptFeedback && data.promptFeedback.blockReason;
+      if (block) throw new Error('تم حظر الطلب من قبل Gemini لأسباب تتعلق بالسلامة (' + block + ').');
+      const fr = data && data.candidates && data.candidates[0] && data.candidates[0].finishReason;
+      throw new Error(fr && fr !== 'STOP' ? `لم يُنتج Gemini نصاً (السبب: ${fr}).` : 'استجابة فارغة من Gemini.');
     }
-    if (data && data.error && !extractAIText(data)) {
-      const m = typeof data.error === 'string' ? data.error : (data.error.message || 'خطأ من الخدمة.');
-      throw new Error(m);
-    }
-    const text = data !== null ? extractAIText(data) : String(raw || '');
-    if (!text || !text.trim()) {
-      console.error('Unexpected worker response', raw);
-      throw new Error('استجابة فارغة أو بصيغة غير معروفة من الـ Worker.');
-    }
-    return text;
+    throw lastError || new Error('لا يوجد نموذج Gemini متاح حالياً.');
   } catch (e) {
     if (e.name === 'AbortError') {
       if (timedOut) throw new Error('انتهت مهلة الاتصال بالخدمة. حاول مرة أخرى.');
       throw e;
-    }
-    if (e instanceof TypeError) {
-      console.error('Network/CORS error', e);
-      throw new Error('فشل الاتصال بالخدمة. تحقق من الإنترنت أو من إعدادات CORS في الـ Worker.');
     }
     throw e;
   } finally {
@@ -1284,13 +1270,6 @@ function initSettings() {
   $('settingsThemeToggle').addEventListener('click', () => applyTheme(State.theme === 'dark' ? 'light' : 'dark'));
   $('fontPlus').addEventListener('click', () => applyFontScale(State.fontScale + 0.1));
   $('fontMinus').addEventListener('click', () => applyFontScale(State.fontScale - 0.1));
-
-  $('workerUrlInput').value = WORKER_URL;
-  $('saveWorkerUrl').addEventListener('click', () => {
-    $('workerUrlInput').value = WORKER_URL;
-    $('workerUrlStatus').textContent = '✅ رابط الـ Worker مثبّت ومفعّل.';
-    $('workerUrlStatus').style.color = 'var(--turquoise)';
-  });
 
   $('clearAllLocalData').addEventListener('click', () => {
     if (!confirm('هل تريد حذف جميع البيانات المحلية؟')) return;
