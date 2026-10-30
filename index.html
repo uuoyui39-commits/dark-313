@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1280">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0e27">
 <title>ZAKAA AI — ذكاء</title>
 <meta name="description" content="ZAKAA AI — منصة ذكاء اصطناعي شاملة للتعليم والكتابة والترجمة والأدوات اليومية">
@@ -63,7 +63,7 @@
   --shadow-md: 0 8px 30px rgba(139, 92, 246, 0.1);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; min-width: 1100px; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--font-ar);
   background: var(--navy-900);
@@ -71,8 +71,7 @@ body {
   font-size: calc(15px * var(--font-scale));
   line-height: 1.6;
   min-height: 100vh;
-  overflow-x: auto;
-  min-width: 1100px;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   transition: background 0.4s, color 0.4s;
   position: relative;
@@ -503,6 +502,51 @@ html[dir="ltr"] .search-box input { padding: 12px 46px 12px 16px; }
   font-size: 0.88rem; line-height: 1.9;
 }
 .footer a { color: var(--blue); }
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  :root { --sidebar-w: min(280px, 85vw); }
+  /* القائمة الجانبية: مخفية افتراضياً وتنزلق من جهة الاتجاه (RTL: يمين / LTR: يسار) */
+  .sidebar {
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.35s;
+  }
+  html[dir="ltr"] .sidebar { transform: translateX(-100%); }
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s;
+    box-shadow: var(--shadow-lg);
+  }
+  html[dir="ltr"] .sidebar.open { transform: translateX(0); }
+  .nav-item:hover, html[dir="ltr"] .nav-item:hover { transform: none; }
+  .main { margin-inline-start: 0; padding: 16px 14px 60px; width: 100%; max-width: 100%; }
+  .mobile-toggle { display: flex; flex-shrink: 0; }
+  .topbar { margin-bottom: 20px; flex-wrap: nowrap; }
+  .topbar-title { font-size: 1.2rem; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
+  .chat-container { height: calc(100vh - 200px); height: calc(100dvh - 200px); min-height: 420px; }
+  .msg { max-width: 96%; }
+  .ask-box { flex-direction: column; }
+  .ask-send { width: 100%; justify-content: center; }
+  .hero { padding: 20px 4px 16px; }
+  .section-title { font-size: 1.2rem; }
+  .card { padding: 16px; }
+  .footer { margin-top: 36px; padding: 22px 12px; }
+  input, textarea, select { font-size: 16px; max-width: 100%; }
+  img, video, canvas, svg { max-width: 100%; }
+  pre, table { max-width: 100%; overflow-x: auto; }
+}
+@media (max-width: 400px) {
+  .main { padding: 14px 10px 56px; }
+  .card { padding: 14px; }
+  .topbar-actions { gap: 6px; }
+  .icon-btn, .mobile-toggle { width: 38px; height: 38px; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -1124,6 +1168,12 @@ function initNav() {
     $('sidebar').classList.remove('open');
     $('sidebarOverlay').classList.remove('active');
   });
+  const closeSidebar = () => {
+    $('sidebar').classList.remove('open');
+    $('sidebarOverlay').classList.remove('active');
+  };
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+  window.addEventListener('resize', () => { if (window.innerWidth > 768) closeSidebar(); });
 }
 
 function applyLanguage(lang) {
