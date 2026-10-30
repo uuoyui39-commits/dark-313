@@ -1095,6 +1095,37 @@ function getEffectiveWorkerUrl() {
   return WORKER_URL;
 }
 
+function extractAIText(data) {
+  if (data == null) return '';
+  if (typeof data === 'string') return data;
+  const keys = ['text', 'response', 'reply', 'result', 'answer', 'output', 'content', 'message'];
+  for (const k of keys) {
+    if (typeof data[k] === 'string' && data[k].trim()) return data[k];
+  }
+  // صيغة Gemini الخام
+  if (Array.isArray(data.candidates) && data.candidates[0]) {
+    const parts = data.candidates[0].content && data.candidates[0].content.parts;
+    if (Array.isArray(parts)) {
+      const t = parts.map(p => (p && typeof p.text === 'string') ? p.text : '').join('');
+      if (t.trim()) return t;
+    }
+  }
+  // صيغة OpenAI
+  if (Array.isArray(data.choices) && data.choices[0]) {
+    const c = data.choices[0];
+    const t = (c.message && c.message.content) || c.text;
+    if (typeof t === 'string' && t.trim()) return t;
+  }
+  // غلاف data / result متداخل
+  for (const k of ['data', 'result', 'response']) {
+    if (data[k] && typeof data[k] === 'object') {
+      const t = extractAIText(data[k]);
+      if (t) return t;
+    }
+  }
+  return '';
+}
+
 async function callAI(opts) {
   const url = getEffectiveWorkerUrl();
   if (!url) {
@@ -1107,26 +1138,70 @@ async function callAI(opts) {
   if (opts.image && opts.image.dataUrl && opts.image.mimeType) {
     body.image = { dataUrl: opts.image.dataUrl, mimeType: opts.image.mimeType };
   }
+  const payload = JSON.stringify(body);
+
+  // مهلة 90 ثانية + دعم إيقاف الطلب من المستخدم
+  const ctrl = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; ctrl.abort(); }, 90000);
+  if (opts.signal) {
+    if (opts.signal.aborted) ctrl.abort();
+    else opts.signal.addEventListener('abort', () => ctrl.abort(), { once: true });
+  }
+
+  async function post(contentType) {
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': contentType },
+      body: payload,
+      signal: ctrl.signal,
+    });
+  }
+
   let resp;
   try {
-    resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: opts.signal || undefined,
-    });
+    try {
+      resp = await post('application/json');
+    } catch (e1) {
+      if (e1.name === 'AbortError') throw e1;
+      // احتياط: طلب بسيط بدون preflight (يفيد إن كان الـ Worker لا يعالج OPTIONS)
+      resp = await post('text/plain;charset=UTF-8');
+    }
+
+    const raw = await resp.text();
+    let data = null;
+    try { data = JSON.parse(raw); } catch (e) { data = null; }
+
+    if (!resp.ok) {
+      const detail = data && (typeof data.error === 'string' ? data.error
+        : (data.error && data.error.message) || data.message)
+        || (raw && raw.length < 300 ? raw : '');
+      console.error('Worker error', resp.status, raw);
+      throw new Error(detail ? `خطأ ${resp.status}: ${detail}` : `خطأ HTTP ${resp.status}`);
+    }
+    if (data && data.error && !extractAIText(data)) {
+      const m = typeof data.error === 'string' ? data.error : (data.error.message || 'خطأ من الخدمة.');
+      throw new Error(m);
+    }
+    const text = data !== null ? extractAIText(data) : String(raw || '');
+    if (!text || !text.trim()) {
+      console.error('Unexpected worker response', raw);
+      throw new Error('استجابة فارغة أو بصيغة غير معروفة من الـ Worker.');
+    }
+    return text;
   } catch (e) {
-    if (e.name === 'AbortError') throw e;
-    throw new Error('فشل الاتصال بالخدمة. تحقق من الإنترنت أو رابط Worker.');
+    if (e.name === 'AbortError') {
+      if (timedOut) throw new Error('انتهت مهلة الاتصال بالخدمة. حاول مرة أخرى.');
+      throw e;
+    }
+    if (e instanceof TypeError) {
+      console.error('Network/CORS error', e);
+      throw new Error('فشل الاتصال بالخدمة. تحقق من الإنترنت أو من إعدادات CORS في الـ Worker.');
+    }
+    throw e;
+  } finally {
+    clearTimeout(timer);
   }
-  let data = null;
-  try { data = await resp.json(); } catch (e) { data = null; }
-  if (!resp.ok) {
-    const msg = (data && (data.error || data.message)) || `خطأ HTTP ${resp.status}`;
-    throw new Error(msg);
-  }
-  if (!data || typeof data.text !== 'string') throw new Error('استجابة غير صالحة من الخدمة.');
-  return data.text;
 }
 
 const PAGE_TITLES = {
