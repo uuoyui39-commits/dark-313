@@ -1163,15 +1163,24 @@ function initGate() {
     hint.style.color = 'var(--turquoise)';
   }
 
-  subscribeBtn.addEventListener('click', () => {
+  let subscribeBusy = false;
+  function onSubscribe(e) {
+    if (e && e.cancelable) e.preventDefault();
+    if (subscribeBusy) return;
+    subscribeBusy = true;
+    setTimeout(() => { subscribeBusy = false; }, 1500);
     State.gateSubscribeClicked = true;
     Store.set('gateClicked', true);
     verifyBtn.disabled = false;
     hint.textContent = '✅ تم فتح القناة. اضغط «تحقق من الاشتراك» للمتابعة.';
     hint.style.color = 'var(--turquoise)';
-    // فتح الرابط في نفس الصفحة (بدون نافذة منبثقة لتفادي الحظر)
-    setTimeout(() => { window.location.assign(TELEGRAM_URL); }, 350);
-  });
+    // فتح الرابط فوراً وفي نفس لحظة اللمس (بدون أي تأخير) ليعمل على الهواتف
+    window.location.href = 'https://t.me/D_8_95';
+  }
+  subscribeBtn.style.touchAction = 'manipulation';
+  subscribeBtn.addEventListener('contextmenu', (e) => e.preventDefault());
+  subscribeBtn.addEventListener('touchend', onSubscribe, { passive: false });
+  subscribeBtn.addEventListener('click', onSubscribe);
 
   verifyBtn.addEventListener('click', () => {
     if (!State.gateSubscribeClicked) {
