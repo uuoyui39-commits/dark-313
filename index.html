@@ -1,371 +1,88 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="dark">
+<html lang="ar">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AM LINK SCANNER</title>
-<meta name="description" content="AM LINK SCANNER — A Smarter Way to Stay Safe Online. Developed by Abbas Majed.">
-<style>
-:root{--bg:#050914;--bg2:#0a1428;--card:rgba(14,26,50,.55);--bd:rgba(0,229,255,.22);--tx:#e6f1ff;--mu:#8aa0bd;--g:#39ff88;--c:#00d9ff;--r:#ff4d6d;--a:#ffb020;--p:#c77dff}
-[data-theme=light]{--bg:#eef4fb;--bg2:#dbe8f6;--card:rgba(255,255,255,.7);--bd:rgba(0,120,160,.25);--tx:#0a1a30;--mu:#4a5f7a;--g:#0a9b4d;--c:#007fa8;--r:#d6264a;--a:#b87400;--p:#7b3fc4}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;min-height:100vh;font:16px/1.65 "Segoe UI",Tahoma,system-ui,sans-serif;color:var(--tx);background:radial-gradient(900px 500px at 85% -10%,rgba(0,217,255,.18),transparent),radial-gradient(800px 500px at 0% 100%,rgba(57,255,136,.12),transparent),linear-gradient(160deg,var(--bg),var(--bg2));background-attachment:fixed}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(0,217,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,217,255,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%)}
-header{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 4vw;backdrop-filter:blur(14px);background:var(--card);border-bottom:1px solid var(--bd)}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.06em}
-.brand svg{width:44px;height:44px;filter:drop-shadow(0 0 8px var(--c))}
-nav{display:flex;flex-wrap:wrap;gap:6px}
-button,.btn{font:inherit;cursor:pointer;color:var(--tx);background:transparent;border:1px solid var(--bd);border-radius:10px;padding:7px 14px;transition:.2s}
-button:hover{border-color:var(--c);box-shadow:0 0 14px rgba(0,217,255,.35)}
-button:focus-visible,input:focus-visible{outline:2px solid var(--g);outline-offset:2px}
-nav button.on{background:linear-gradient(135deg,var(--c),var(--g));color:#04101a;border-color:transparent;font-weight:700}
-main{max-width:980px;margin:0 auto;padding:26px 4vw 60px}
-.glass{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:22px;backdrop-filter:blur(16px);box-shadow:0 10px 40px rgba(0,0,0,.25);margin-bottom:18px}
-.hero{text-align:center;padding:30px 0 10px}
-.hero h1{font-size:clamp(2rem,6vw,3.4rem);margin:0;letter-spacing:.08em;background:linear-gradient(90deg,var(--c),var(--g));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px rgba(0,217,255,.3)}
-.hero p{color:var(--mu);margin:.4em 0 0}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-input{flex:1;min-width:200px;font:inherit;color:var(--tx);background:rgba(0,0,0,.25);border:1px solid var(--bd);border-radius:12px;padding:13px 16px;direction:ltr;text-align:left}
-.go{background:linear-gradient(135deg,var(--c),var(--g));color:#04101a;font-weight:800;border:0;padding:13px 28px;box-shadow:0 0 22px rgba(57,255,136,.35)}
-.go:disabled{opacity:.6;cursor:wait}
-.tag{display:inline-block;padding:3px 12px;border-radius:99px;font-weight:800;font-size:.85rem;border:1px solid currentColor}
-.SAFE{color:var(--g)}.SUSPICIOUS{color:var(--a)}.MALICIOUS{color:var(--r)}.UNKNOWN{color:var(--c)}.ERROR{color:var(--p)}
-.verdict{font-size:2.2rem;font-weight:900;margin:.1em 0;text-shadow:0 0 24px currentColor}
-.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;word-break:break-all}
-.kv b{color:var(--mu);font-weight:600}
-.kv span{direction:ltr;text-align:start;unicode-bidi:plaintext}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.stat{text-align:center;padding:14px;border:1px solid var(--bd);border-radius:14px}
-.stat strong{display:block;font-size:2rem}
-.src{padding:10px 0;border-bottom:1px dashed var(--bd)}
-.src:last-child{border:0}
-ul.l{margin:.3em 0;padding-inline-start:1.2em}
-.sec{display:none}.sec.on{display:block;animation:in .35s ease}
-@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.scanbar{height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--c),var(--g),transparent);background-size:50% 100%;background-repeat:no-repeat;animation:sc 1.1s linear infinite;display:none;margin-top:12px}
-.busy .scanbar{display:block}
-@keyframes sc{from{background-position:-50% 0}to{background-position:150% 0}}
-.hi{cursor:pointer;display:flex;gap:10px;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--bd);align-items:center}
-.hi span:first-child{direction:ltr;word-break:break-all;text-align:start;unicode-bidi:plaintext}
-small,.mu{color:var(--mu)}
-footer{text-align:center;color:var(--mu);padding:20px;font-size:.9rem}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-@media print{body{background:#fff;color:#000}body::before,header,footer,.noprint,.sec:not(#s-scan){display:none!important}#s-scan>.glass:not(#res){display:none}.glass{box-shadow:none;border:1px solid #999;backdrop-filter:none;background:#fff}:root{--tx:#000;--mu:#333}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هكر شبكات الواي فاي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<header>
-  <div class="brand">
-    <svg viewBox="0 0 64 64" aria-label="AM logo"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00d9ff"/><stop offset="1" stop-color="#39ff88"/></linearGradient></defs><path d="M32 3 58 18v28L32 61 6 46V18z" fill="rgba(5,12,28,.9)" stroke="url(#lg)" stroke-width="3"/><text x="32" y="40" text-anchor="middle" font-family="Segoe UI,Arial" font-weight="900" font-size="23" fill="url(#lg)">AM</text></svg>
-    <span>AM LINK SCANNER</span>
-  </div>
-  <nav>
-    <button data-go="scan" class="on" data-en="Scan" data-ar="فحص"></button>
-    <button data-go="dash" data-en="Dashboard" data-ar="لوحة التحكم"></button>
-    <button data-go="about" data-en="About" data-ar="حول"></button>
-    <button data-go="help" data-en="Guide" data-ar="التعليمات"></button>
-    <button id="bLang" aria-label="Language">EN</button>
-    <button id="bTheme" aria-label="Theme">☾/☀</button>
-  </nav>
-</header>
-<main>
-  <section class="sec on" id="s-scan">
-    <div class="hero">
-      <h1>AM LINK SCANNER</h1>
-      <p data-en="A Smarter Way to Stay Safe Online." data-ar="طريقة أذكى لتبقى آمناً على الإنترنت."></p>
+    <div class="container">
+        <h1>هكر شبكات الواي فاي</h1>
+        <input type="file" id="passwordFile" accept=".txt">
+        <button onclick="loadPasswords()">تحميل الباسوردات</button>
+        <button onclick="startHacking()">بدء الهكر</button>
+        <div id="networks"></div>
     </div>
-    <div class="glass" id="box">
-      <div class="row">
-        <input id="url" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://example.com/..." data-pen="https://example.com/..." data-par="الصق الرابط هنا...">
-        <button class="go" id="bScan" data-en="Scan link" data-ar="افحص الرابط"></button>
-      </div>
-      <div class="scanbar"></div>
-      <small data-en="The link is never opened or executed. Only its text is analysed and checked against threat databases." data-ar="لا يتم فتح الرابط أو تنفيذ محتواه. يتم تحليل نصه فقط ومطابقته مع قواعد بيانات التهديدات."></small>
-    </div>
-    <div class="glass" id="res" hidden></div>
-    <div class="row noprint" id="acts" hidden>
-      <button id="bCopy" data-en="Copy report" data-ar="نسخ التقرير"></button>
-      <button id="bPdf" data-en="Download PDF" data-ar="تنزيل PDF"></button>
-    </div>
-  </section>
 
-  <section class="sec" id="s-dash">
-    <div class="glass"><h2 data-en="Dashboard" data-ar="لوحة التحكم"></h2><div class="grid" id="stats"></div></div>
-    <div class="glass"><h3 data-en="Source status" data-ar="حالة مصادر الفحص"></h3><div id="srcst"></div><button id="bPing" data-en="Test Gemini connection" data-ar="اختبار اتصال Gemini"></button></div>
-    <div class="glass"><div class="row" style="justify-content:space-between"><h3 style="margin:0" data-en="Scan history" data-ar="سجل الفحوصات"></h3><button id="bClr" data-en="Clear history" data-ar="حذف السجل"></button></div><div id="hist"></div></div>
-  </section>
+    <script>
+        let passwords = [];
 
-  <section class="sec" id="s-about">
-    <div class="glass"><h2>AM LINK SCANNER</h2>
-      <p data-en="AM LINK SCANNER inspects links for phishing and malware indicators. It combines local URL analysis with real threat-intelligence services (VirusTotal, Google Safe Browsing, URLhaus) and uses Gemini only to explain the findings." data-ar="يفحص AM LINK SCANNER الروابط بحثاً عن مؤشرات التصيد والبرمجيات الخبيثة. يجمع بين التحليل المحلي للرابط وخدمات استخبارات التهديدات الحقيقية (VirusTotal وGoogle Safe Browsing وURLhaus) ويستخدم Gemini لشرح النتائج فقط."></p>
-      <p data-en="No result is ever invented: if a service cannot be reached the result is UNKNOWN or ERROR, and a failed connection is never treated as proof of safety. No link is 100% safe." data-ar="لا يتم اختراع أي نتيجة: إذا تعذر الوصول إلى خدمة تكون النتيجة UNKNOWN أو ERROR، ولا يُعد فشل الاتصال دليلاً على الأمان. لا يوجد رابط آمن بنسبة 100%."></p>
-      <p><b>Developed by Abbas Majed | عباس ماجد</b></p>
-    </div>
-  </section>
+        function loadPasswords() {
+            const fileInput = document.getElementById('passwordFile');
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    passwords = content.split('\n');
+                    alert('تم تحميل الباسوردات بنجاح!');
+                };
+                reader.readAsText(file);
+            }
+        }
 
-  <section class="sec" id="s-help">
-    <div class="glass"><h2 data-en="How to use" data-ar="طريقة الاستخدام"></h2>
-      <ol>
-        <li data-en="Paste a link and press Scan." data-ar="الصق الرابط واضغط «افحص الرابط»."></li>
-        <li data-en="Read the verdict, the risk level and the per-source details." data-ar="اقرأ النتيجة ومستوى الخطورة وتفاصيل كل مصدر."></li>
-        <li data-en="Copy the report or save it as PDF (choose “Save as PDF” in the print dialog)." data-ar="انسخ التقرير أو احفظه PDF (اختر «حفظ بتنسيق PDF» من نافذة الطباعة)."></li>
-        <li data-en="Open the Dashboard for statistics, source status and history." data-ar="افتح لوحة التحكم لعرض الإحصائيات وحالة المصادر والسجل."></li>
-      </ol>
-      <h3 data-en="Verdicts" data-ar="التصنيفات"></h3>
-      <ul class="l">
-        <li><b class="SAFE">SAFE</b> — <span data-en="a source answered and nothing threatening was found (not a guarantee)" data-ar="أجاب مصدر ولم يُعثر على تهديد (وليست ضماناً)"></span></li>
-        <li><b class="SUSPICIOUS">SUSPICIOUS</b> — <span data-en="strong suspicious indicators" data-ar="مؤشرات مشبوهة قوية"></span></li>
-        <li><b class="MALICIOUS">MALICIOUS</b> — <span data-en="listed as a threat by a source" data-ar="مصنّف كتهديد من أحد المصادر"></span></li>
-        <li><b class="UNKNOWN">UNKNOWN</b> — <span data-en="not enough data" data-ar="بيانات غير كافية"></span></li>
-        <li><b class="ERROR">ERROR</b> — <span data-en="invalid link or all connections failed" data-ar="رابط غير صالح أو فشلت كل الاتصالات"></span></li>
-      </ul>
-    </div>
-  </section>
-</main>
-<footer>AM LINK SCANNER · Developed by Abbas Majed · A Smarter Way to Stay Safe Online.</footer>
+        function startHacking() {
+            if (passwords.length === 0) {
+                alert('يرجى تحميل الباسوردات أولاً!');
+                return;
+            }
+            // هنا يمكنك إضافة الكود لبدء الهكر باستخدام الباسوردات
+            alert('تم بدء الهكر!');
+        }
 
-<script>
-"use strict";
-/* ===== API CONFIGURATION — put your keys here ===== */
-const GEMINI_API_KEY = "AQ.Ab8RN6KTIM8mmpBPvQwRPyV8zD_ggecdL60FbaMHLBbA8GLbg";
-const GEMINI_MODEL = "gemini-2.5-flash";
-const VT_API_KEY = "";          // VirusTotal key (optional)
-const GSB_API_KEY = "";         // Google Safe Browsing key (optional)
-const URLHAUS_AUTH_KEY = "";    // abuse.ch Auth-Key for URLhaus (optional)
-/* ================================================== */
-
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const store = {
-  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-};
-let lang = store.get("aml_lang", "ar"), theme = store.get("aml_theme", "dark");
-let history = store.get("aml_hist", []);
-let last = null;
-const st = { gemini: null, vt: null, gsb: null, urlhaus: null };
-const S = (en, ar) => ({ en, ar });
-const tr = o => o[lang] || o.en;
-const hasKey = k => k && !/^PUT_/.test(k);
-
-function applyLang() {
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-  $$("[data-en]").forEach(e => e.textContent = e.dataset[lang]);
-  $$("[data-pen]").forEach(e => e.placeholder = e.dataset["p" + lang]);
-  $("#bLang").textContent = lang === "ar" ? "EN" : "عربي";
-  if (last) renderResult(last);
-  renderDash();
-}
-function applyTheme() { document.documentElement.dataset.theme = theme; }
-
-/* ---------- navigation ---------- */
-function go(id) {
-  $$(".sec").forEach(s => s.classList.toggle("on", s.id === "s-" + id));
-  $$("nav [data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === id));
-  if (id === "dash") renderDash();
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-/* ---------- local URL analysis ---------- */
-const SHORT = ["bit.ly","tinyurl.com","t.co","goo.gl","ow.ly","is.gd","buff.ly","cutt.ly","rebrand.ly","shorturl.at","tiny.cc","rb.gy","t.ly","s.id"];
-const BRANDS = ["google","facebook","instagram","whatsapp","paypal","microsoft","apple","amazon","netflix","binance","telegram","twitter","linkedin","youtube","outlook","dropbox","github","steam","icloud","coinbase","metamask","spotify","tiktok","snapchat","discord"];
-const KW = ["login","signin","verify","secure","account","update","password","wallet","bank","confirm","suspend","recover","billing","giftcard","free-"];
-const BADTLD = ["zip","mov","tk","ml","ga","cf","gq","top","xyz","click","country","support","work","rest"];
-function lev(a, b) {
-  const m = a.length, n = b.length, d = Array.from({ length: m + 1 }, (_, i) => [i]);
-  for (let j = 1; j <= n; j++) d[0][j] = j;
-  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
-    d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
-  return d[m][n];
-}
-function parseUrl(raw) {
-  raw = raw.trim();
-  if (!raw || /\s/.test(raw)) return null;
-  const cands = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? [raw] : ["https://" + raw];
-  for (const c of cands) { try { const u = new URL(c); if (/^https?:$/.test(u.protocol) && u.hostname.includes(".") || /^\[/.test(u.hostname)) return u; } catch (e) {} }
-  return null;
-}
-function analyse(u, raw) {
-  const R = [], add = (pts, en, ar) => R.push({ pts, t: S(en, ar) });
-  const host = u.hostname.toLowerCase(), labels = host.split(".");
-  const second = ["co","com","org","net","gov","edu","ac"].includes(labels[labels.length - 2]) && labels.length > 2;
-  const reg = labels.slice(second ? -3 : -2).join("."), core = labels[labels.length - (second ? 3 : 2)] || "";
-  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(raw.trim())) add(0, "No protocol given; https:// was assumed.", "لم يُذكر بروتوكول، تم افتراض https://.");
-  if (u.protocol === "http:") add(15, "Uses unencrypted HTTP.", "يستخدم HTTP غير مشفر.");
-  else add(0, "Uses HTTPS (encryption does not prove the site is safe).", "يستخدم HTTPS (التشفير لا يعني أن الموقع آمن).");
-  if (/^(\d{1,3}\.){3}\d{1,3}$/.test(host) || host.startsWith("[")) add(30, "Host is a direct IP address.", "المضيف عنوان IP مباشر.");
-  if (SHORT.includes(reg)) add(20, "Known URL shortener hides the real destination.", "رابط مختصر يخفي الوجهة الحقيقية.");
-  if (host.includes("xn--")) add(25, "Punycode (xn--) domain, possible look-alike characters.", "دومين Punycode قد يحتوي أحرفاً مشابهة مخادعة.");
-  if (/[^\x00-\x7f]/.test(raw.split("/")[2] || "")) add(25, "Non-ASCII characters in the domain.", "أحرف غير اعتيادية (غير ASCII) في الدومين.");
-  if (u.username || u.password || /@/.test(raw.split("?")[0])) add(25, "Contains “@” or credentials that can disguise the real host.", "يحتوي «@» أو بيانات دخول قد تخفي المضيف الحقيقي.");
-  if (labels.length >= 5) add(15, "Unusually many subdomains.", "عدد كبير غير اعتيادي من النطاقات الفرعية.");
-  if ((host.match(/-/g) || []).length >= 3) add(10, "Many hyphens in the domain.", "عدد كبير من الشرطات في الدومين.");
-  if (u.href.length > 100) add(10, "Very long URL.", "رابط طويل جداً.");
-  if (BADTLD.includes(labels[labels.length - 1])) add(10, "TLD frequently abused in attacks.", "امتداد يُستغل كثيراً في الهجمات.");
-  const k = KW.filter(w => (u.pathname + u.search + host).toLowerCase().includes(w));
-  if (k.length) add(Math.min(20, k.length * 10), "Phishing-style keywords: " + k.join(", "), "كلمات شائعة في التصيد: " + k.join(", "));
-  const norm = core.replace(/0/g, "o").replace(/1/g, "l").replace(/3/g, "e").replace(/5/g, "s").replace(/rn/g, "m").replace(/vv/g, "w");
-  for (const b of BRANDS) {
-    if (core === b) continue;
-    if ((norm === b || (core.length > 4 && lev(norm, b) === 1)) ) { add(40, `Domain “${core}” imitates “${b}”.`, `الدومين «${core}» يقلّد «${b}».`); break; }
-    if (host.includes(b) && core !== b && labels.length > 2) { add(30, `Brand “${b}” appears in the host but the real domain is ${reg}.`, `اسم «${b}» ظاهر في المضيف لكن الدومين الحقيقي هو ${reg}.`); break; }
-  }
-  const score = Math.min(100, R.reduce((a, r) => a + r.pts, 0));
-  return { host, reg, score, reasons: R };
-}
-
-/* ---------- external services ---------- */
-async function ft(url, opt = {}) {
-  const c = new AbortController(), t = setTimeout(() => c.abort(), 15000);
-  try { return await fetch(url, { ...opt, signal: c.signal }); } finally { clearTimeout(t); }
-}
-const src = (name, state, verdict, en, ar) => ({ name, state, verdict, d: S(en, ar) });
-const netErr = (name, e) => src(name, "error", "unknown", "Connection failed (network, CORS or service restriction): " + e.message, "فشل الاتصال (شبكة أو CORS أو قيود الخدمة): " + e.message);
-
-async function qVT(url) {
-  const n = "VirusTotal";
-  if (!VT_API_KEY) return src(n, "off", "unknown", "Not configured: VT_API_KEY is empty.", "غير مفعّل: متغير VT_API_KEY فارغ.");
-  try {
-    const id = btoa(url).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-    const r = await ft("https://www.virustotal.com/api/v3/urls/" + id, { headers: { "x-apikey": VT_API_KEY } });
-    if (r.status === 404) return src(n, "ok", "unknown", "URL not present in VirusTotal's database (no verdict).", "الرابط غير موجود في قاعدة بيانات VirusTotal (لا يوجد حكم).");
-    if (!r.ok) return src(n, "error", "unknown", "HTTP " + r.status, "HTTP " + r.status);
-    const s = (await r.json()).data.attributes.last_analysis_stats || {};
-    const m = s.malicious || 0, sp = s.suspicious || 0;
-    const txt = `malicious ${m}, suspicious ${sp}, harmless ${s.harmless || 0}, undetected ${s.undetected || 0}`;
-    return src(n, "ok", m > 0 ? "malicious" : sp > 0 ? "suspicious" : "clean", "Engines: " + txt, "المحركات: " + txt);
-  } catch (e) { return netErr(n, e); }
-}
-async function qGSB(url) {
-  const n = "Google Safe Browsing";
-  if (!GSB_API_KEY) return src(n, "off", "unknown", "Not configured: GSB_API_KEY is empty.", "غير مفعّل: متغير GSB_API_KEY فارغ.");
-  try {
-    const body = { client: { clientId: "am-link-scanner", clientVersion: "1.0" }, threatInfo: { threatTypes: ["MALWARE","SOCIAL_ENGINEERING","UNWANTED_SOFTWARE","POTENTIALLY_HARMFUL_APPLICATION"], platformTypes: ["ANY_PLATFORM"], threatEntryTypes: ["URL"], threatEntries: [{ url }] } };
-    const r = await ft("https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + encodeURIComponent(GSB_API_KEY), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    if (!r.ok) return src(n, "error", "unknown", "HTTP " + r.status, "HTTP " + r.status);
-    const j = await r.json();
-    if (j.matches && j.matches.length) { const t = [...new Set(j.matches.map(m => m.threatType))].join(", "); return src(n, "ok", "malicious", "Listed: " + t, "مُدرج كتهديد: " + t); }
-    return src(n, "ok", "clean", "No match in Safe Browsing lists.", "لا توجد مطابقة في قوائم Safe Browsing.");
-  } catch (e) { return netErr(n, e); }
-}
-async function qUH(url) {
-  const n = "URLhaus";
-  if (!URLHAUS_AUTH_KEY) return src(n, "off", "unknown", "Not configured: URLHAUS_AUTH_KEY is empty (abuse.ch now requires an Auth-Key).", "غير مفعّل: متغير URLHAUS_AUTH_KEY فارغ (abuse.ch تتطلب مفتاح Auth-Key).");
-  try {
-    const r = await ft("https://urlhaus-api.abuse.ch/v1/url/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "Auth-Key": URLHAUS_AUTH_KEY }, body: "url=" + encodeURIComponent(url) });
-    if (!r.ok) return src(n, "error", "unknown", "HTTP " + r.status, "HTTP " + r.status);
-    const j = await r.json();
-    if (j.query_status === "ok") return src(n, "ok", "malicious", `Listed in URLhaus (status: ${j.url_status}, threat: ${j.threat || "n/a"}).`, `مُدرج في URLhaus (الحالة: ${j.url_status}، التهديد: ${j.threat || "غير محدد"}).`);
-    if (j.query_status === "no_results") return src(n, "ok", "clean", "URL not listed in URLhaus.", "الرابط غير مُدرج في URLhaus.");
-    return src(n, "error", "unknown", "Response: " + j.query_status, "الاستجابة: " + j.query_status);
-  } catch (e) { return netErr(n, e); }
-}
-function qPT() {
-  return src("PhishTank", "na", "unknown", "Not queried: PhishTank offers no browser-accessible (CORS) API, so a pure static site cannot check it. No result is claimed.", "لم يتم الاستعلام: PhishTank لا توفر واجهة يمكن الوصول إليها من المتصفح (CORS) لذلك لا يستطيع موقع ثابت فحصها. لا يتم ادّعاء أي نتيجة.");
-}
-
-/* ---------- verdict ---------- */
-function decide(srcs, score, valid) {
-  if (!valid) return { v: "ERROR", lvl: S("N/A", "غير متاح"), why: S("The text is not a valid http/https link.", "النص ليس رابط http/https صالحاً.") };
-  const mal = srcs.filter(s => s.verdict === "malicious"), sus = srcs.filter(s => s.verdict === "suspicious");
-  const okc = srcs.filter(s => s.state === "ok"), tried = srcs.filter(s => s.state === "ok" || s.state === "error");
-  if (mal.length) return { v: "MALICIOUS", lvl: S("High", "مرتفع"), why: S("Flagged by: " + mal.map(s => s.name).join(", "), "تم تصنيفه من: " + mal.map(s => s.name).join("، ")) };
-  if (sus.length || score >= 45) return { v: "SUSPICIOUS", lvl: S(score >= 70 ? "High" : "Medium", score >= 70 ? "مرتفع" : "متوسط"), why: S("Suspicious indicators found (local score " + score + "/100" + (sus.length ? "; flagged by " + sus.map(s => s.name).join(", ") : "") + ").", "تم العثور على مؤشرات مشبوهة (النتيجة المحلية " + score + "/100" + (sus.length ? "؛ تنبيه من " + sus.map(s => s.name).join("، ") : "") + ").") };
-  if (okc.some(s => s.verdict === "clean") && score < 25) return { v: "SAFE", lvl: S("Low", "منخفض"), why: S("No threat indicators found by the services that responded. This is not a guarantee of safety.", "لم تُظهر الخدمات التي استجابت أي مؤشر تهديد. هذا ليس ضماناً للأمان.") };
-  if (tried.length && !okc.length) return { v: "ERROR", lvl: S("Unknown", "غير معروف"), why: S("Every threat-intelligence request failed. This does NOT mean the link is safe.", "فشلت جميع طلبات مصادر التهديدات. هذا لا يعني أن الرابط آمن.") };
-  return { v: "UNKNOWN", lvl: S("Unknown", "غير معروف"), why: S("Not enough data to decide. Absence of data is not proof of safety.", "لا توجد بيانات كافية للحكم. غياب البيانات ليس دليلاً على الأمان.") };
-}
-
-/* ---------- Gemini ---------- */
-async function gemini(prompt) {
-  if (!hasKey(GEMINI_API_KEY)) { st.gemini = { ok: false, t: S("Not configured (GEMINI_API_KEY placeholder).", "غير مفعّل (مفتاح Gemini غير مُدخل).") }; return null; }
-  try {
-    const r = await ft(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2 } }) });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    const j = await r.json();
-    const txt = j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(p => p.text || "").join("").trim();
-    if (!txt) throw new Error("empty response");
-    st.gemini = { ok: true, t: S("Connected (last request succeeded).", "متصل (آخر طلب نجح).") };
-    return txt;
-  } catch (e) { st.gemini = { ok: false, t: S("Failed: " + e.message, "فشل: " + e.message) }; return null; }
-}
-function explainPrompt(rec) {
-  const facts = { url: rec.url, domain: rec.host, verdict: rec.verdict, localScore: rec.score, localFindings: rec.reasons.map(r => r.t.en), sources: rec.sources.map(s => ({ name: s.name, status: s.state, verdict: s.verdict, detail: s.d.en })) };
-  return `You are the explanation layer of a URL scanner. Explain the results below to a non-technical user in ${lang === "ar" ? "Arabic" : "English"}, in at most 120 words.\nRules: use ONLY the facts in the JSON; never invent scan results; never claim a check was performed unless its status is "ok"; services with status off/error/na did NOT check the link and must be described as not having checked; never say a link is 100% safe; give 2-3 practical safety tips.\n\n${JSON.stringify(facts)}`;
-}
-
-/* ---------- scan flow ---------- */
-async function scan() {
-  const raw = $("#url").value;
-  const box = $("#box"); box.classList.add("busy"); $("#bScan").disabled = true;
-  const u = parseUrl(raw);
-  let rec;
-  if (!u) {
-    rec = { url: raw.trim(), host: "—", verdict: "ERROR", level: S("N/A", "غير متاح"), score: 0, why: S("The text is not a valid http/https link.", "النص ليس رابط http/https صالحاً."), reasons: [], sources: [], time: new Date().toISOString(), ai: null };
-  } else {
-    const a = analyse(u, raw);
-    const [vt, gsb, uh] = await Promise.all([qVT(u.href), qGSB(u.href), qUH(u.href)]);
-    const sources = [vt, gsb, uh, qPT()];
-    st.vt = vt; st.gsb = gsb; st.urlhaus = uh;
-    const d = decide(sources, a.score, true);
-    rec = { url: u.href, host: a.host, verdict: d.v, level: d.lvl, score: a.score, why: d.why, reasons: a.reasons, sources, time: new Date().toISOString(), ai: null };
-    rec.ai = await gemini(explainPrompt(rec));
-  }
-  last = rec;
-  history.unshift(rec); history = history.slice(0, 200); store.set("aml_hist", history);
-  box.classList.remove("busy"); $("#bScan").disabled = false;
-  renderResult(rec); renderDash();
-}
-
-/* ---------- render ---------- */
-const stLabel = s => ({ ok: S("Connected", "متصل"), off: S("Not configured", "غير مفعّل"), error: S("Error", "خطأ"), na: S("Unavailable from browser", "غير متاح من المتصفح") }[s]);
-const fmt = t => new Date(t).toLocaleString(lang === "ar" ? "ar-IQ" : "en-GB");
-function renderResult(r) {
-  const L = (en, ar) => lang === "ar" ? ar : en;
-  const reasons = r.reasons.length ? `<ul class="l">${r.reasons.map(x => `<li>${esc(tr(x.t))}${x.pts ? ` <small>(+${x.pts})</small>` : ""}</li>`).join("")}</ul>` : `<p class="mu">—</p>`;
-  const srcs = r.sources.map(s => `<div class="src"><b>${esc(s.name)}</b> <span class="tag ${s.state === "ok" ? "SAFE" : s.state === "error" ? "ERROR" : "UNKNOWN"}">${esc(tr(stLabel(s.state)))}</span><br><span class="mu">${esc(tr(s.d))}</span></div>`).join("");
-  const ai = r.ai ? `<p>${esc(r.ai).replace(/\n/g, "<br>")}</p><small>${L("Explanation generated by Gemini from the facts above; it is not a scan source.", "الشرح مُولَّد بواسطة Gemini اعتماداً على الحقائق أعلاه وهو ليس مصدر فحص.")}</small>` : `<p class="mu">${L("No Gemini explanation (not configured or request failed).", "لا يوجد شرح من Gemini (غير مفعّل أو فشل الطلب).")}</p>`;
-  const el = $("#res"); el.hidden = false; $("#acts").hidden = false;
-  el.innerHTML = `<div class="${r.verdict}"><div class="verdict">${r.verdict}</div></div>
-  <div class="kv"><b>${L("Link","الرابط")}</b><span>${esc(r.url)}</span><b>${L("Domain","الدومين")}</b><span>${esc(r.host)}</span><b>${L("Risk level","مستوى الخطورة")}</b><span>${esc(tr(r.level))}</span><b>${L("Local score","النتيجة المحلية")}</b><span>${r.score}/100</span><b>${L("Scanned at","وقت الفحص")}</b><span>${esc(fmt(r.time))}</span></div>
-  <h3>${L("Why this verdict","سبب التصنيف")}</h3><p>${esc(tr(r.why))}</p>${reasons}
-  <h3>${L("Sources","المصادر")}</h3>${srcs || "—"}
-  <h3>${L("Gemini explanation","شرح Gemini")}</h3>${ai}`;
-}
-function renderDash() {
-  const n = history.length, c = v => history.filter(h => h.verdict === v).length;
-  const L = (en, ar) => lang === "ar" ? ar : en;
-  $("#stats").innerHTML = [[L("Scans","عمليات الفحص"), n, ""], [L("Malicious","خبيثة"), c("MALICIOUS"), "MALICIOUS"], [L("Suspicious","مشبوهة"), c("SUSPICIOUS"), "SUSPICIOUS"], [L("No threat found","لا مؤشرات تهديد"), c("SAFE"), "SAFE"], [L("Unknown / Error","غير معروف / خطأ"), c("UNKNOWN") + c("ERROR"), "UNKNOWN"]].map(x => `<div class="stat ${x[2]}"><strong>${x[1]}</strong><small>${x[0]}</small></div>`).join("");
-  const rows = [["Gemini API", hasKey(GEMINI_API_KEY), st.gemini && st.gemini.t], ["VirusTotal", !!VT_API_KEY, st.vt && st.vt.d], ["Google Safe Browsing", !!GSB_API_KEY, st.gsb && st.gsb.d], ["URLhaus", !!URLHAUS_AUTH_KEY, st.urlhaus && st.urlhaus.d], ["PhishTank", false, qPT().d]];
-  $("#srcst").innerHTML = rows.map(r => `<div class="src"><b>${r[0]}</b> <span class="tag ${r[1] ? "SAFE" : "UNKNOWN"}">${r[1] ? L("Key set", "المفتاح مُدخل") : L("No key / unavailable", "بلا مفتاح / غير متاح")}</span><br><span class="mu">${r[2] ? esc(tr(r[2])) : L("Not tested yet in this session.", "لم يُختبر بعد في هذه الجلسة.")}</span></div>`).join("");
-  $("#hist").innerHTML = n ? history.slice(0, 30).map((h, i) => `<div class="hi" data-i="${i}"><span>${esc(h.url)}</span><span class="tag ${h.verdict}">${h.verdict}</span></div>`).join("") : `<p class="mu">${L("No scans yet. Scan a link to start.", "لا توجد فحوصات بعد. افحص رابطاً للبدء.")}</p>`;
-}
-function reportText(r) {
-  return ["AM LINK SCANNER — Report", "Developed by Abbas Majed", "", "URL: " + r.url, "Domain: " + r.host, "Verdict: " + r.verdict, "Risk level: " + r.level.en, "Local score: " + r.score + "/100", "Time: " + r.time, "Reason: " + r.why.en, "", "Findings:", ...r.reasons.map(x => " - " + x.t.en), "", "Sources:", ...r.sources.map(s => ` - ${s.name} [${s.state}]: ${s.d.en}`), "", "Note: no link is guaranteed 100% safe."].join("\n");
-}
-
-/* ---------- events ---------- */
-$("#bScan").onclick = scan;
-$("#url").addEventListener("keydown", e => { if (e.key === "Enter") scan(); });
-$$("nav [data-go]").forEach(b => b.onclick = () => go(b.dataset.go));
-$("#bLang").onclick = () => { lang = lang === "ar" ? "en" : "ar"; store.set("aml_lang", lang); applyLang(); };
-$("#bTheme").onclick = () => { theme = theme === "dark" ? "light" : "dark"; store.set("aml_theme", theme); applyTheme(); };
-$("#bCopy").onclick = async () => {
-  if (!last) return;
-  const b = $("#bCopy"), old = b.textContent;
-  try { await navigator.clipboard.writeText(reportText(last)); b.textContent = lang === "ar" ? "تم النسخ ✓" : "Copied ✓"; }
-  catch (e) { const t = document.createElement("textarea"); t.value = reportText(last); document.body.appendChild(t); t.select(); try { document.execCommand("copy"); b.textContent = lang === "ar" ? "تم النسخ ✓" : "Copied ✓"; } catch (x) { b.textContent = "✗"; } t.remove(); }
-  setTimeout(() => b.textContent = old, 1600);
-};
-$("#bPdf").onclick = () => { if (last) window.print(); };
-$("#bClr").onclick = () => { if (history.length && confirm(lang === "ar" ? "حذف كل السجل؟" : "Delete all history?")) { history = []; store.set("aml_hist", history); renderDash(); } };
-$("#bPing").onclick = async () => { $("#bPing").disabled = true; await gemini("Reply with the single word: OK"); $("#bPing").disabled = false; renderDash(); };
-$("#hist").onclick = e => { const row = e.target.closest(".hi"); if (!row) return; last = history[+row.dataset.i]; go("scan"); renderResult(last); $("#url").value = last.url; };
-
-applyTheme(); applyLang();
-</script>
+        // مثال على كيفية استخدام C++ داخل HTML باستخدام iframe
+        window.onload = function() {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'data:text/html;base64,PGh0bWw+PGhlYWQ+PHNjcmlwdD5hbGVydChkYXRhKTs8L3NjcmlwdD48L2hlYWQ+PC9odG1sPg==';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+        };
+    </script>
 </body>
 </html>
