@@ -29,21 +29,21 @@ onAuthStateChanged(auth, async u => {
 
 let edit=null,stages=[],subjects=[],fl=[];const say=m=>$("#msg").textContent=m;
 
-// نظام الرفع المجاني المباشر بدون مشاكل الفايربيس ستوريج
+// نظام الرفع السريع والمجاني المتوافق مع المتصفح بدون أخطاء
 async function up(file){
     if(!OK.includes(file.type))throw Error("نوع الملف غير مسموح");
     if(file.size>MAX)throw Error("الحجم أكبر من 15MB");
     say("جارٍ رفع الملف...");
     const formData = new FormData();
-    formData.append('reqtype', 'upload-file');
-    formData.append('fileToUpload', file);
-    const response = await fetch('https://catbox.moe/user/api.php', {
+    formData.append('files[]', file);
+    const response = await fetch('https://uguu.se/upload?output=json', {
         method: 'POST',
         body: formData
     });
     if (!response.ok) throw Error("فشل الاتصال بسيرفر الرفع");
-    const url = (await response.text()).trim();
-    if(!url.startsWith("http")) throw Error("فشل رفع الملف");
+    const data = await response.json();
+    if(!data.success || !data.files || !data.files[0].url) throw Error("فشل رفع الملف");
+    const url = data.files[0].url;
     await addDoc(collection(db,"files"),{name:file.name,url,size:file.size,contentType:file.type,createdAt:serverTimestamp()});
     return url;
 }
