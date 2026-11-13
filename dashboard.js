@@ -29,21 +29,18 @@ onAuthStateChanged(auth, async u => {
 
 let edit=null,stages=[],subjects=[],fl=[];const say=m=>$("#msg").textContent=m;
 
-// نظام الرفع السريع والمجاني المتوافق مع المتصفح بدون أخطاء
+// نظام الرفع السريع والمستقر المتوافق 100% مع المتصفح والموبايل
 async function up(file){
     if(!OK.includes(file.type))throw Error("نوع الملف غير مسموح");
     if(file.size>MAX)throw Error("الحجم أكبر من 15MB");
     say("جارٍ رفع الملف...");
-    const formData = new FormData();
-    formData.append('files[]', file);
-    const response = await fetch('https://uguu.se/upload?output=json', {
+    const response = await fetch('https://envs.sh', {
         method: 'POST',
-        body: formData
+        body: file
     });
     if (!response.ok) throw Error("فشل الاتصال بسيرفر الرفع");
-    const data = await response.json();
-    if(!data.success || !data.files || !data.files[0].url) throw Error("فشل رفع الملف");
-    const url = data.files[0].url;
+    const url = (await response.text()).trim();
+    if(!url.startsWith("http")) throw Error("فشل رفع الملف");
     await addDoc(collection(db,"files"),{name:file.name,url,size:file.size,contentType:file.type,createdAt:serverTimestamp()});
     return url;
 }
