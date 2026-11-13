@@ -14,9 +14,19 @@ const MAX=15*1024*1024,OK=["application/pdf","image/jpeg","image/png","image/web
 $("#col").innerHTML=Object.keys(L).map(k=>`<option value="${k}">${L[k]}</option>`).join("");
 $("#go").onclick=()=>signInWithEmailAndPassword(auth,$("#em").value,$("#pw").value).catch(e=>$("#err").textContent="فشل الدخول: "+e.code);
 $("#out").onclick=()=>signOut(auth);
-onAuthStateChanged(auth,async u=>{if(!u){$("#login").classList.remove("hide");$("#app").classList.add("hide");return}
- const t=await u.getIdTokenResult(true);if(!t.claims.admin){$("#err").textContent="هذا الحساب ليس مديراً.";return signOut(auth)}
- $("#login").classList.add("hide");$("#app").classList.remove("hide");show()});
+
+onAuthStateChanged(auth, async u => {
+  if (!u) { $("#login").classList.remove("hide"); $("#app").classList.add("hide"); return; }
+  // السماح المباشر لإيميلك كمدير للمنصة
+  if (u.email !== "basmajed20055@gmail.com") { 
+    $("#err").textContent = "هذا الحساب ليس مديراً."; 
+    return signOut(auth); 
+  }
+  $("#login").classList.add("hide"); 
+  $("#app").classList.remove("hide"); 
+  show();
+});
+
 let edit=null,stages=[],subjects=[],fl=[];const say=m=>$("#msg").textContent=m;
 async function up(file){if(!OK.includes(file.type))throw Error("نوع الملف غير مسموح");if(file.size>MAX)throw Error("الحجم أكبر من 15MB");
  const r=ref(storage,`public/${Date.now()}_${file.name.replace(/[^\w.-]/g,"_")}`),t=uploadBytesResumable(r,file);
