@@ -1,0 +1,5 @@
+rules_version='2';
+service cloud.firestore{match /databases/{db}/documents{
+ function admin(){return request.auth!=null&&request.auth.token.admin==true;}
+ match /{c}/{id}{allow read:if c in ['stages','subjects','quotes','settings','glossary']||(c in ['booklets','summaries','questions','dailyQuestions','announcements']&&resource.data.published==true)||admin();
+  allow write:if admin();}}}
